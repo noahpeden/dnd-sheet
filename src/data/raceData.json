@@ -1,0 +1,391 @@
+{
+  "Human": {
+    "abilities": [
+      "Actor",
+      "Attention To Detail",
+      "Charger",
+      "Chug",
+      "Concentration",
+      "Dodge",
+      "Dual-Wield Finesse",
+      "Dual-Wield Heavy",
+      "Dual-Wield Light",
+      "Dungeon Delver",
+      "Favored Enemy",
+      "Fleet-footed",
+      "Innovation",
+      "Keen Mind",
+      "Large Hands",
+      "Lightning Reflexes",
+      "Mage Slayer",
+      "Martial Arts",
+      "Narcoleptic",
+      "Pacifist",
+      "Parry",
+      "Physician",
+      "Point-Blank",
+      "Sidestep",
+      "Steely Surgeon",
+      "Sniper",
+      "Tough"
+    ],
+    "racialAbility": "",
+    "stats": {},
+    "statsText": "Humans have no racial stat modifiers."
+  },
+  "Dwarf": {
+    "abilities": [
+      "Earthcunning",
+      "Hardy",
+      "Mason",
+      "Mountaineer",
+      "Resilience"
+    ],
+    "racialAbility": "Cave Dweller",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 2,
+      "Dexterity": -2,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Dwarves initially have +2 Constitution and -2 Dexterity."
+  },
+  "Elf": {
+    "abilities": [
+      "Fey Ancestry",
+      "Trance",
+      "Combat Training",
+      "Woodswalker",
+      "Elven Weapons"
+    ],
+    "racialAbility": "Immortal",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": -2,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 2
+    },
+    "statsText": "Elves initially have +2 Wisdom and -2 Constitution."
+  },
+  "Half-Elf": {
+    "abilities": [
+      "Fey Ancestry",
+      "Magical Dilettante",
+      "Keen Senses",
+      "Stealth Dilettante",
+      "Proficiency"
+    ],
+    "racialAbility": "Subtle Charm",
+    "stats": {
+      "Charisma": 1,
+      "Constitution": 0,
+      "Dexterity": 1,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Half-elves initially have +1 Charisma and +1 Dexterity."
+  },
+  "Halfling": {
+    "abilities": [
+      "Bravery",
+      "Creature of Comfort",
+      "Nimble",
+      "Storyteller",
+      "Unnoticed"
+    ],
+    "racialAbility": "Profound Luck",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": 2,
+      "Intelligence": 0,
+      "Strength": -2,
+      "Wisdom": 0
+    },
+    "statsText": "Halflings initially have +2 Dexterity and -2 Strength."
+  },
+  "Dragonborn": {
+    "abilities": [
+      "Draconic Resistance",
+      "Forceful Roar",
+      "Lung Capacity"
+    ],
+    "racialAbility": "Wings",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": -2,
+      "Intelligence": 0,
+      "Strength": 2,
+      "Wisdom": 0
+    },
+    "statsText": "Dragonborn initially have +2 Strength and -2 Dexterity."
+  },
+  "Gnome": {
+    "abilities": [
+      "Adaptable",
+      "Darkvision",
+      "Entrepreneur",
+      "Favored Enemy",
+      "Tinkerer"
+    ],
+    "racialAbility": "Easy Marks",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": -2,
+      "Dexterity": 0,
+      "Intelligence": 2,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Gnomes initially have +2 Intelligence and -2 Constitution."
+  },
+  "Goblin": {
+    "abilities": [
+      "Agile",
+      "Cunning",
+      "Darkvision",
+      "Fury",
+      "Tamer"
+    ],
+    "racialAbility": "Escapist",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": 0,
+      "Intelligence": 2,
+      "Strength": -2,
+      "Wisdom": 0
+    },
+    "statsText": "Goblins initially have +2 Intelligence and -2 Strength."
+  },
+  "Goliath": {
+    "abilities": [
+      "Athlete",
+      "Fair Play",
+      "Mountain Born",
+      "Stone's Endurance",
+      "Survival Of The Fittest"
+    ],
+    "racialAbility": "Large",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 2,
+      "Dexterity": 0,
+      "Intelligence": -2,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Goliaths initially have +2 Constitution and -2 Intelligence."
+  },
+  "Half-Orc": {
+    "abilities": [
+      "Menacing",
+      "Night Hunter",
+      "Pack Leader",
+      "Relentless",
+      "Tribal"
+    ],
+    "racialAbility": "Savagery",
+    "stats": {
+      "Charisma": -2,
+      "Constitution": 0,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 2,
+      "Wisdom": 0
+    },
+    "statsText": "Half-Orcs initially have +2 Strength and -2 Charisma."
+  },
+  "Tabaxi": {
+    "abilities": [
+      "Cat's Eyes",
+      "Claws",
+      "Darkvision"
+    ],
+    "racialAbility": "Agility",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": 2,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": -2
+    },
+    "statsText": "Tabaxi initially have +2 Dexterity and -2 Wisdom."
+  },
+  "Tiefling": {
+    "abilities": [
+      "Alacrity",
+      "Blood Link",
+      "Devil's Tongue",
+      "Outcast",
+      "Wanton"
+    ],
+    "racialAbility": "Infernal",
+    "stats": {
+      "Charisma": -2,
+      "Constitution": 0,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 2
+    },
+    "statsText": "Tieflings initially have +2 Wisdom and -2 Charisma."
+  },
+  "Tortle": {
+    "abilities": [
+      "Hold Breath",
+      "Snapjaw",
+      "Survivalist",
+      "Withdraw"
+    ],
+    "racialAbility": "Shell",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 1,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 1
+    },
+    "statsText": "Tortles initially have +1 Constitution and +1 Wisdom."
+  },
+  "Warforged": {
+    "abilities": [
+      "Compartmentalize",
+      "Detached",
+      "Sentry",
+      "Technolink",
+      "Waterproof"
+    ],
+    "racialAbility": "Inorganic",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 2,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": -2
+    },
+    "statsText": "Warforged initially have +2 Constitution and -2 Wisdom."
+  },
+  "Ewok": {
+    "abilities": [
+      "Bravery",
+      "Flora And Fauna",
+      "Forest Dweller",
+      "Longshot",
+      "Stomach"
+    ],
+    "racialAbility": "Barter",
+    "stats": {
+      "Charisma": 2,
+      "Constitution": -2,
+      "Dexterity": 0,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Ewoks initially have +2 Charisma and -2 Constitution."
+  },
+  "Gamorrean": {
+    "abilities": [
+      "Bouncer",
+      "Frontliner",
+      "Loyalty",
+      "Stench",
+      "Warmonger"
+    ],
+    "racialAbility": "Heavyweight",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": 0,
+      "Intelligence": -2,
+      "Strength": 2,
+      "Wisdom": 0
+    },
+    "statsText": "Gamorreans initially have +2 Strength and -2 Intelligence."
+  },
+  "Gungan": {
+    "abilities": [
+      "Bubble Tech",
+      "Clown Around",
+      "Jumper",
+      "Mucus",
+      "Tongue"
+    ],
+    "racialAbility": "Amphibious",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": 2,
+      "Intelligence": -2,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Gungans initially have +2 Dexterity and -2 Intelligence."
+  },
+  "Jawa": {
+    "abilities": [
+      "Cower",
+      "Driving",
+      "Groupthink",
+      "Opportunist",
+      "Scrapper"
+    ],
+    "racialAbility": "Scavenger",
+    "stats": {
+      "Charisma": 0,
+      "Constitution": 0,
+      "Dexterity": -2,
+      "Intelligence": 2,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Jawas initially have +2 Intelligence and -2 Dexterity."
+  },
+  "Wookie": {
+    "abilities": [
+      "Forest Dweller",
+      "Large Build",
+      "Provoked",
+      "Shiriiwook",
+      "Short Fuse"
+    ],
+    "racialAbility": "Winter Fur",
+    "stats": {
+      "Charisma": 1,
+      "Constitution": 0,
+      "Dexterity": 0,
+      "Intelligence": 1,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Wookies initially have +1 Charisma and +1 Intelligence."
+  },
+  "Zabrak": {
+    "abilities": [
+      "Alien Endurance",
+      "Force Sensitive",
+      "Self-Sufficient",
+      "Tattoos"
+    ],
+    "racialAbility": "Crown Of Horns",
+    "stats": {
+      "Charisma": -2,
+      "Constitution": 0,
+      "Dexterity": 2,
+      "Intelligence": 0,
+      "Strength": 0,
+      "Wisdom": 0
+    },
+    "statsText": "Zabraks initially have +2 Dexterity and -2 Charisma."
+  }
+}
