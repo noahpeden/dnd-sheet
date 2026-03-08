@@ -341,10 +341,6 @@ const BLANK_FOLDERS = [
   { id: "equipment", name: "Equipment", icon: "⚔", locked: true, items: [] },
   { id: "carried",   name: "Carried",   icon: "🧳", locked: false, items: [] },
 ];
-const DEFAULT_TEXT_STYLES = {
-  heading: { size: 0.70, color: "" }, label: { size: 0.60, color: "" },
-  body:    { size: 0.85, color: "" }, value: { size: 0.90, color: "" }, meta: { size: 0.55, color: "" },
-};
 
 /* ─── CHARACTER SELECT SCREEN ─── */
 function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
