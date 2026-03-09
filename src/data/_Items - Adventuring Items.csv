@@ -1,0 +1,34 @@
+Item,Description,Price
+Arrows,Ammunition for bows. Reusable as determined by the GM.,1c
+Bolts,Ammunition for crossbows.,1c
+Bullets,Ammunition for firearms.,1c
+Caltrops,Place on an adjacent space. Deals 1d4 damage (bypassing armor) to whoever walks on that space. Reusable unless walked upon.,2c
+Flint,Can be struck to attempt a fire.,2c
+Rope,Taut and strong. Cost per 5 ft (1 space). Reusable unless cut.,3c
+Feed,Enough to feed a horse for a week.,5c
+Rations,Enough to feed a grown adventurer for a week.,8c
+Lockpicking Tools,"Used for lock picking. 24 actions. Reusable, but easily broken.",10c
+Jar of Bees,Because you never know.,15c
+Torch,Lights up a 4x4 area. Reusable.,20c
+Map,Eliminates fog-of-war for unexplored areas.,30-120c
+Bedroll,"Grants +1 to all CHA, DEX, and INT skills when used while sleeping. Reusable.",65c
+Lantern,Lights up an 8x8 area. Reusable.,80c
+Crowbar,"For prying into things. Also can be used as a Bludgeoning weapon for 1d4 damage, but limited on this usage.",95c
+Fishing Rod,Used next to a body of water to catch fish. Roll Survival to determine haul. Reusable.,100c
+Saddle,Animals with a saddle require -4 Animal Handling to ride. Reusable.,170c
+Medikit,5 actions. Heal an ally within 1 space for 1d6+Medicine skill. Also removes any Bleeding effects. 1 use per battle.,180c
+Tent,"Protects against sun, rain, and snow. Houses 3. Reusable.",200c
+Outfitter Tent,Protects against moderate storms. Houses 8. Reusable.,"2,000c"
+Scroll,Contains a Wizard spell. Usage requires an Enchantments roll of (spell level x 2.5). Burns to ash upon successful usage.,300c
+Tome,Contains up to 5 Wizard spells. Usage requires an Enchantments roll of (spell level x 2.5). Reusable.,"20,000c"
+Credichip (I),Carries unlimited credit. Plug into devices to make exchanges. Fingerprint secured. Reusable.,25c
+Pokeball (I),"6 actions. Used to capture and house Pokemon, taking care of their basic necessities. Reusable, but can only house 1 Pokemon at a time.",40c
+Lighter (I),Produces a tiny flame. Reusable.,100c
+Flashlight (I),Lights up a 1x10 cone. Reusable.,130c
+Fire Extinguisher (I),6 actions. Extinguishes the flame on a space within 5 spaces. Reusable.,400c
+Rockets (I),Ammunition for the Rocket Launcher.,600c
+Earpiece (I),Allows for wireless communication up to 30 miles. Reusable.,800c
+Bug Scanner (I),"Tiny device, locates all electronic devices within 4 spaces. Reusable.","1,500c"
+Parachute (I),2 actions. Deploy to slow to a descent of 3 spaces per turn.,"1,650c"
+Smartphone (I),"Allows for calls, internet access, GPS, gaming, and other services, dependent on the vicinity’s network. Reusable.","3,500c"
+Opti (I),"Attaches to forearm. Emits a hologram that provides network services such as weather, navigation, social media, and AI companionship. Includes a pop-out VR visor, flashlight, stereo system, alarms, and games.","6,000c"

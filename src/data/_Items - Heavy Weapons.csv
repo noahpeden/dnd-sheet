@@ -1,0 +1,27 @@
+Name,Has Weight, Requirement HA, Requirement RA,Hands,Range,Type,Actions,Damage,Cost,Ammo Type,Capacity,Reload Actions,EC,Defense Target,Notes,>Steel Variant
+Staff,TRUE,,,2H,1,Bludgeoning,5,1d4+1,60c,,,,6,Fortitude,Enchantments require 1/2 skill and financial cost to place on this.,
+Heavy Crossbow,TRUE,2 HA,10 RA,2H,40,Piercing,2,4d8,"6,000c",Bolts,1,8,4,Reflex,,X
+Giant Club,TRUE,2 HA,,2H,1,Bludgeoning,6,3d4+2,400c,,,,5,Fortitude,,X
+Pick,TRUE,2 HA,,2H,1,Piercing,3,1d10,"1,400c",,,,6,Fortitude,"Can be used to mine mineral veins. Roll Athletics for amount, then Survival for substance.",X
+Musket,TRUE,3 HA,6 RA,2H,30,Piercing,4,4d8+5,"7,500c",Bullets,1,12,1,Reflex,,X
+Longsword,TRUE,3 HA,,1H,1,Slashing,4,2d12,"2,000c",,,,4,Fortitude,,X
+Sledgehammer,TRUE,4 HA,,2H,1,Bludgeoning,5,4d6,"2,600c",,,,3,Fortitude,,X
+Maul,TRUE,5 HA,,1H,1,Bludgeoning,5,2d6,"3,400c",,,,4,Fortitude,,
+Scythe,TRUE,5 HA,,2H,2,Slashing,4,2d6+2,"2,300c",,,,5,Fortitude,,X
+Battleaxe,TRUE,6 HA,,2H,1,Slashing,4,1d8+4,"2,800c",,,,3,Fortitude,,X
+Longbow,TRUE,7 HA,8 RA,2H,70,Piercing,9,4d6+1,"2,400c",Arrows,1,,6,Reflex,,X
+Lance,TRUE,7 HA,,1H,2,Piercing,3,1d6+1,"5,000c",,,,5,Fortitude,,X
+Trident,TRUE,8 HA,,2H,2/10,Piercing,2,3d4,"4,000c",,,,4,Fortitude/Reflex,,X
+Flail,TRUE,8 HA,,1H,1,Bludgeoning,5,3d6,"4,200c",,,,4,Fortitude,,X
+Greatsword,TRUE,8 HA,,2H,1,Slashing,5,3d12,"8,200c",,,,3,Fortitude,,X
+Waraxe,TRUE,12 HA,,2H,1,Slashing,6,2d8+5,"6,200c",,,,3,Fortitude,,X
+Hunting Rifle (I),TRUE,1 HA,4 RA,2H,40,Piercing,6,2d6,"3,400c",Bullets,3,3,2,Reflex,,X
+Sniper Rifle (I),TRUE,2 HA,12 RA,2H,80,Piercing,9,3d10+3,"4,900c",Bullets,1,4,1,Reflex,,X
+Sawed-Off Shotgun (I),TRUE,5 HA,3 RA,2H,30,Piercing,5,2d8+5,"3,800c",Bullets,1,3,,Reflex,-1 damage for each space beyond adjacent range.,X
+Assault Rifle (I),TRUE,5 HA,8 RA,2H,30,Piercing,1,1d6+2,"7,200c",Bullets,30,6,,Reflex,Fires 2 bullets per action.,X
+Combat Shotgun (I),TRUE,7 HA,7 RA,2H,20,Piercing,3,2d10+5,"7,100c",Bullets,5,9,,Reflex,-1 damage for each space beyond adjacent range.,X
+Harpoon Gun (I),TRUE,8 HA,5 RA,2H,10,Piercing,4,1d10,"5,300c",Harpoon (Included),1,5,1,Reflex,"Connects to target, bringing them to you upon Reload.",X
+Double Barrel Shotgun (I),TRUE,10 HA,6 RA,2H,10,Piercing,4,4d6+5,"6,000c",Bullets,2,6,,Reflex,-1 damage for each space beyond adjacent range.,X
+,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+(I) Industrial,,,,,,,,,,,,,,,,

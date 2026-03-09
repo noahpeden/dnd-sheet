@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useCharacter } from "./hooks/useCharacter";
 import { BLANK_CHARACTER, HUGH_JASS_SEED, DEFAULT_TEXT_STYLES } from "./characterDefaults";
+import { ITEM_CATALOG } from "./data/itemCatalog";
 import {
   ABILITY_DESCRIPTIONS, ABILITY_UPGRADES, ABILITY_SKILL_EFFECTS,
   THEME_PRESETS, THEME_FIELDS, SKILL_GROUPS, ITEM_CATEGORIES, ITEM_CAT_LABELS,
@@ -341,11 +342,6 @@ const BLANK_FOLDERS = [
   { id: "equipment", name: "Equipment", icon: "⚔", locked: true, items: [] },
   { id: "carried",   name: "Carried",   icon: "🧳", locked: false, items: [] },
 ];
-const DEFAULT_TEXT_STYLES = {
-  heading: { size: 0.70, color: "" }, label: { size: 0.60, color: "" },
-  body:    { size: 0.85, color: "" }, value: { size: 0.90, color: "" }, meta: { size: 0.55, color: "" },
-};
-
 /* ─── CHARACTER SELECT SCREEN ─── */
 function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
   const p = THEME_PRESETS.forest;
@@ -417,6 +413,8 @@ function CharacterSheet({ characterId, onBack }) {
   /* ─── UI-ONLY STATE (not persisted) ─── */
   const [tab, setTab] = useState("skills");
   const [showThemeEditor, setShowThemeEditor] = useState(false);
+  const [itemsCategory, setItemsCategory] = useState(ITEM_CATALOG[0].category);
+  const [itemsSearch, setItemsSearch] = useState("");
 
   /* ─── READ FROM CONVEX (with fallbacks while loading) ─── */
   const info = character?.info ?? BLANK_CHARACTER.info;
@@ -430,6 +428,10 @@ function CharacterSheet({ characterId, onBack }) {
   const inventory = character?.inventory ?? [];
   const slotPositions = character?.slotPositions ?? DEFAULT_SLOT_POSITIONS;
   const bodySlots = character?.bodySlots ?? BLANK_CHARACTER.bodySlots;
+  const slotPositionsRef = useRef(slotPositions);
+  slotPositionsRef.current = slotPositions;
+  const bodySlotsRef = useRef(bodySlots);
+  bodySlotsRef.current = bodySlots;
   const inventoryFolders = character?.inventoryFolders ?? BLANK_CHARACTER.inventoryFolders;
   const currency = character?.currency ?? BLANK_CHARACTER.currency;
   const abilities = character?.abilities ?? BLANK_CHARACTER.abilities;
@@ -508,7 +510,7 @@ function CharacterSheet({ characterId, onBack }) {
   };
 
   const moveSlot = useCallback((slotId, nx, ny) => {
-    setSlotPositions((prev) => prev.map((s) => s.id === slotId ? { ...s, x: Math.round(nx), y: Math.round(ny) } : s));
+    updateField("slotPositions", slotPositionsRef.current.map((s) => s.id === slotId ? { ...s, x: Math.round(nx), y: Math.round(ny) } : s));
   }, []);
 
   const addSlot = () => {
@@ -532,12 +534,10 @@ function CharacterSheet({ characterId, onBack }) {
   }, [slotPositions]);
 
   const equipItem = useCallback((itemId, slot) => {
-    setBodySlots((prev) => {
-      const next = { ...prev };
-      Object.keys(next).forEach((s) => { if (next[s] === itemId) next[s] = null; });
-      next[slot] = itemId;
-      return next;
-    });
+    const next = { ...bodySlotsRef.current };
+    Object.keys(next).forEach((s) => { if (next[s] === itemId) next[s] = null; });
+    next[slot] = itemId;
+    updateField("bodySlots", next);
   }, []);
 
   const unequipItem = useCallback((slot) => { setBodySlots((prev) => ({ ...prev, [slot]: null })); }, []);
@@ -1272,6 +1272,7 @@ function CharacterSheet({ characterId, onBack }) {
           <TabBtn t={t} active={tab === "skills"} label="Skills" onClick={() => setTab("skills")} icon="🎯" />
           <TabBtn t={t} active={tab === "abilities"} label="Abilities" onClick={() => setTab("abilities")} icon="✨" />
           <TabBtn t={t} active={tab === "inventory"} label="Inventory" onClick={() => setTab("inventory")} icon="🎒" />
+          <TabBtn t={t} active={tab === "items"} label="Items" onClick={() => setTab("items")} icon="🛒" />
           <TabBtn t={t} active={tab === "notes"} label="Notes" onClick={() => setTab("notes")} icon="📜" />
           <TabBtn t={t} active={tab === "levels"} label="Levels" onClick={() => setTab("levels")} icon="📈" />
         </div>
@@ -1803,6 +1804,12 @@ function CharacterSheet({ characterId, onBack }) {
               </button>
             </div>
 
+            {/* Carry Capacity */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, padding: "4px 8px", background: "rgba(5,10,5,0.5)", borderRadius: 6, border: `1px solid ${t.primaryDim}33` }}>
+              <span style={{ fontSize: "var(--ty-label-size)", color: t.textDim, whiteSpace: "nowrap" }}>Weight Capacity:</span>
+              <span style={{ fontSize: "var(--ty-label-size)", color: t.primary, fontWeight: 600 }}>5 (Athletics+2)</span>
+            </div>
+
             {/* ══ EQUIPMENT FOLDER (special — shows equipment loadout items) ══ */}
             {invActiveFolder === "equipment" && (
               <div>
@@ -1926,15 +1933,84 @@ function CharacterSheet({ characterId, onBack }) {
               );
             })()}
 
-            {/* Currency */}
-            <Section t={t} title="Currency & Carry Capacity">
-              <div className="flex gap-4 items-end">
-                {["cp", "sp", "gp", "pp"].map((c) => <Field t={t} key={c} label={c.toUpperCase()} value={currency[c]} onChange={(v) => setCurrency((p) => ({ ...p, [c]: v }))} type="number" w="w-16" small />)}
-                <span style={{ fontSize: "0.7rem", color: t.primaryMid + "88", marginLeft: "auto" }}>Weight Capacity: 5 (Athletics+2)</span>
-              </div>
-            </Section>
           </div>
         )}
+
+        {/* ITEMS TAB */}
+        {tab === "items" && (() => {
+          const activeCat = ITEM_CATALOG.find((c) => c.category === itemsCategory) ?? ITEM_CATALOG[0];
+          const query = itemsSearch.trim().toLowerCase();
+          const visibleItems = query
+            ? ITEM_CATALOG.flatMap((c) => c.items.filter((i) => i.name.toLowerCase().includes(query) || i.description.toLowerCase().includes(query)))
+            : activeCat.items;
+          return (
+            <div className="pt-3 tab-content" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {/* Currency */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", padding: "6px 10px", background: "rgba(5,10,5,0.5)", borderRadius: 7, border: `1px solid ${t.primaryDim}33` }}>
+                {[["cp", "CP"], ["sp", "SP"], ["gp", "GP"], ["pp", "PP"], ["cr", "Credits"]].map(([key, label]) => (
+                  <div key={key} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                    <span style={{ fontSize: "var(--ty-label-size)", color: t.textDim, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</span>
+                    <input
+                      type="number"
+                      value={currency[key] ?? 0}
+                      onChange={(e) => setCurrency((p) => ({ ...p, [key]: Number(e.target.value) }))}
+                      style={{ width: key === "cr" ? 80 : 52, background: "rgba(5,10,5,0.7)", border: `1px solid ${t.primaryDim}44`, borderRadius: 5, color: t.text, padding: "2px 6px", fontSize: "var(--ty-body-size)", outline: "none", textAlign: "center" }}
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* Search */}
+              <input
+                value={itemsSearch}
+                onChange={(e) => setItemsSearch(e.target.value)}
+                placeholder="Search all items..."
+                style={{ width: "100%", background: "rgba(5,10,5,0.7)", border: `1px solid ${t.primaryDim}44`, borderRadius: 6, color: t.text, padding: "5px 10px", fontSize: "var(--ty-body-size)", outline: "none", boxSizing: "border-box" }}
+              />
+              <div style={{ display: "flex", gap: 8, minHeight: 0 }}>
+                {/* Category sidebar — hidden when searching */}
+                {!query && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 110, flexShrink: 0 }}>
+                    {ITEM_CATALOG.map((cat) => (
+                      <button key={cat.category} onClick={() => setItemsCategory(cat.category)}
+                        style={{ textAlign: "left", padding: "4px 8px", borderRadius: 5, fontSize: "var(--ty-label-size)", cursor: "pointer", border: "none",
+                          background: cat.category === itemsCategory ? `${t.primary}33` : "transparent",
+                          color: cat.category === itemsCategory ? t.primary : t.textDim,
+                          fontWeight: cat.category === itemsCategory ? 700 : 400 }}>
+                        {cat.category}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Item list */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto", maxHeight: 420, paddingRight: 2 }}>
+                  {visibleItems.length === 0 && (
+                    <span style={{ color: t.textDim, fontSize: "var(--ty-body-size)", padding: 8 }}>No items found.</span>
+                  )}
+                  {visibleItems.map((item) => (
+                    <div key={item.name} style={{ background: "rgba(5,10,5,0.6)", border: `1px solid ${t.primaryDim}33`, borderRadius: 7, padding: "6px 10px", display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                          <span style={{ fontSize: "var(--ty-body-size)", color: t.text, fontWeight: 600 }}>{item.name}</span>
+                          <span style={{ fontSize: "var(--ty-label-size)", color: t.primary, fontWeight: 500 }}>{item.price}</span>
+                        </div>
+                        {item.stats && <div style={{ fontSize: "var(--ty-label-size)", color: t.textDim, marginTop: 1 }}>{item.stats}</div>}
+                        {item.description && <div style={{ fontSize: "var(--ty-label-size)", color: t.textDim, marginTop: 1, fontStyle: "italic" }}>{item.description}</div>}
+                      </div>
+                      <button
+                        onClick={() => {
+                          const id = "cat_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: activeCat.category, bonuses: {}, bonusNotes: {} }]);
+                        }}
+                        style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 5, border: `1px solid ${t.primary}66`, background: `${t.primary}22`, color: t.primary, fontSize: "var(--ty-label-size)", cursor: "pointer", whiteSpace: "nowrap" }}>
+                        + Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* NOTES TAB */}
         {tab === "notes" && (

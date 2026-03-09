@@ -1,0 +1,34 @@
+Name,Has Weight, Requirement FA,Requirement  RA,Hands,Range,Type,Actions,Damage,Cost,Ammo Type,Capacity,Reload Actions,EC,Defense Target,Notes,>Steel Variant
+Kama,TRUE,1 FA,,1H,1,Slashing,3,1d6,600c,,,,5,Fortitude,Deals +1 damage each while dual-wielding.,X
+Balanced Knife,,1 FA,,1H,1/15,Piercing,1,1d4,"3,900c",,,,4,Fortitude,,X
+Whip,TRUE,2 FA,,1H,2,Bludgeoning,5,2d6+1,"7,200c",,,,4,Fortitude,,
+Bolas,,3 FA,5  RA,1H,15,,4,,130c,,,,5,Reflex,Used to trip an enemy at range.,
+Boomerang,,3 FA,5  RA,1H,30,Bludgeoning,5,2d4+3,"2,300c",,,,6,Reflex,"On an attack roll of 14 or higher, this will return to you.",X
+Repeating Crossbow,TRUE,3 FA,7  RA,2H,50,Piercing,1,2d4,"10,000c",Bolts,3,5,4,Reflex,,X
+Sai,TRUE,4 FA,,1H,1,Piercing,4,1d4+2,"5,700c",,,,5,Fortitude,Gives +3 Parry bonus to Fortitude.,X
+Stafftrap,TRUE,4 FA,,2H,2,Piercing,5,1d10,"2,600c",,,,4,Fortitude,"Grapples target. If successful, deals damage each turn. Deals 1d12 damage upon target escaping.",X
+Shuriken,,5 FA,3  RA,1H,20,Piercing,1,1d4,50c,,,,6,Reflex,Damage bypasses armor.,X
+Nunchaku,TRUE,5 FA,,1H,1,Bludgeoning,2,1d4+1,"3,800c",,,,6,Fortitude,Deals +3 damage each while dual-wielding.,X
+Warfan,,5 FA,,1H,1,Piercing,2,1d6+1,"7,600c",,,,5,Fortitude,"No penalty if thrown, can be fanned out to provide +3 Block-based Reflex instead of damage.",X
+Hidden Blade,,6 FA,,1H,1,Piercing,4,1d4,"3,200c",,,,4,Fortitude,Allows Assassinate ability while user is in Stealth.,X
+Meteor Hammer,TRUE,6 FA,2  RA,2H,3,Slashing,5,1d10,"2,500c",,,,5,Reflex,Attacks affect up to 2 targets within range.,X
+Rope Dart,TRUE,6 FA,2  RA,2H,5,Slashing,3,1d6,"2,500c",,,,5,Reflex,Attacks affect up to 2 targets within range.,X
+Caber,TRUE,7 FA,,2H,2/5,Bludgeoning,10,3d8+8,"12,000c",,,,3,Fortitude/Reflex,Trips enemies. Can be thrown without penalty.,X
+Garotte,TRUE,8 FA,,2H,1,,3,,"1,700c",,,,3,Fortitude,You may take the higher of 2d20 rolls when using Athletics to strangle a target.,
+Double-Bladed Sword,TRUE,9 FA,,2H,1,Slashing,3,3d8,"8,000c",,,,3,Fortitude,,X
+Dire Flail,TRUE,10 FA,,2H,2,Bludgeoning,8,6d6+3,"14,000c",,,,3,Fortitude,,X
+Grenade (I),,2 FA,5  RA,1H,10,Piercing,6,1d12+2,700c,,,,,Reflex,"Detonates, dealing damage to all within 3 spaces. 1-space knockback.",
+Stingsaber (I),TRUE,2 FA,,1H,1,Slashing,3,1d8,"2,700c",,,,3,Fortitude,,
+Chainsaw (I),TRUE,2 FA,,2H,1,Slashing,2,2d6,"4,600c",,,,,Fortitude,Requires 6 actions Charging time.,X
+Gatling Gun (I),TRUE,9 FA,9  RA,2H,25,Piercing,1,1d6+2,"10,000c",Bullets,50,18,1,Reflex,Fires 5 per action. Requires 10 actions Charging time.,X
+Stunsaber (I),TRUE,9 FA,,1H,1,Slashing,3,2d10,"3,400c",,,,1,Fortitude,Reduces target’s actions by 2 on their next turn.,
+Flamethrower (I),TRUE,9 FA,,2H,3,Fire,3,1d8,"6,300c",,,,,Reflex,"Fire affects everyone in a 1x3 line, ⅔ ignition chance.",
+Grenade Launcher (I),TRUE,10 FA,8  RA,2H,20,,3,,"8,200c",Grenades,1,6,,Reflex,Damage/Type dependent on Bomb used.,
+Lightsaber (I),TRUE,15 FA,,1H,1,Slashing,3,3d12,"9,000c",,,,1,Fortitude,,
+Rocket Launcher (I),TRUE,16 FA,15  RA,2H,50,Fire,3,3d8,"8,400c",Rockets,1,9,,Reflex,"Affects target and all within 3 spaces, guaranteed ignition.",
+Double Lightsaber (I),TRUE,20 FA,,2H,1,Slashing,4,4d20,"16,000c",,,,1,Fortitude,,
+Garnsworth's Boogers (I),,6 FA,4 RA,1H,5,Piercing,5,1d12,900c,,,,,Reflex,"Does not break Stealth. Latches onto target. First attack normal, all other attacks bypass Armor.",
+Thumper (I),TRUE,8 FA,,2H,1,Piercing,6,3d8,"9,700c",,,,,Fortitude,Damage bypasses armor. Requires 6 actions Charging time.,X
+,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+(I) Industrial,,,,,,,,,,,,,,,,

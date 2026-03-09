@@ -1,0 +1,34 @@
+Standard Armor,Has Weight,Requirements,Armor,EC,Penalty,Cost,,
+Robes,,,0 Armor,5,,"6,700c",,Crafted with Cloth
+Enhanced Robes,,,1 Armor,8,,"20,000c",,
+Linen/Stationwear,TRUE,,1 Armor,7,,80c,,
+Wool/Microcord,TRUE,1 Fortitude,2 Armor,7,,700c,,
+Silk/Steelcloth,TRUE,2 Fortitude,3 Armor,6,,"1,900c",,
+Wolfskin/Street Armor,TRUE,3 Fortitude,4 Armor,6,,"2,700c",,Crafted with Leather
+Bearskin/Tempweave,TRUE,4 Fortitude,5 Armor,5,,"4,500c",,
+Gatorskin/Estex Suit,TRUE,5 Fortitude,6 Armor,5,,"6,900c",,
+Butted Chain/Carbon Skin,TRUE,6 Fortitude,7 Armor,4,-1 DEX,"9,400c",,Crafted with Steel (Chainmail)
+Riveted Chain/Freebooter Armor,TRUE,7 Fortitude,8 Armor,4,-2 DEX,"15,000c",,
+Wedged Chain/Steelbones,TRUE,8 Fortitude,9 Armor,3,-3 DEX,"26,000c",,
+Breastplate/Defiance Series,TRUE,9 Fortitude,10 Armor,3,-5 DEX,"39,000c",,Crafted with Steel (Half Plate)
+Spauldrons/Vesk Brigandine,TRUE,10 Fortitude,11 Armor,2,-6 DEX,"50,000c",,
+Tasses/Security Armor,TRUE,11 Fortitude,12 Armor,2,-8 DEX,"64,000c",,
+Garniture/Tactical Armor,TRUE,12 Fortitude,13 Armor,1,-9 DEX,"77,000c",,Crafted with Steel (Platemail)
+Munition Armor/Voidshield,TRUE,13 Fortitude,14 Armor,1,-11 DEX,"89,000c",,
+Dragonhide/Golemforged Plate,TRUE,14 Fortitude,15 Armor,,-13 DEX,"100,000c",,
+Shocksuit,TRUE,15 Fortitude,16 Armor,,-14 DEX,"120,000c",,Crafted with >Steel
+Vitrum Plate,TRUE,16 Fortitude,17 Armor,,-16 DEX,"150,000c",,
+Miningjack,TRUE,17 Fortitude,18 Armor,,-18 DEX,"190,000c",,
+Iridishell,TRUE,18 Fortitude,19 Armor,,-19 DEX,"240,000c",,
+Aegis Series,TRUE,19 Fortitude,20 Armor,3,-20 DEX,"300,000c",,
+,,,,,,,,
+Standard Pieces*,Has Weight,Requirements,Armor,EC,Penalty,Cost,,
+Leather Gloves,,,3 Temp HP,6,,"1,000c",,
+Leather Cowl,,,3 Temp HP,6,,"1,000c",,
+Leather Boots,,,3 Temp HP,6,,"1,000c",,
+Chain Gloves,,6 Fortitude,6 Temp HP,2,,"10,000c",,
+Chain Coif,,6 Fortitude,6 Temp HP,2,,"10,000c",,
+Chain Boots,,6 Fortitude,6 Temp HP,2,,"10,000c",,
+Platemail Gloves,TRUE,12 Fortitude,9 Temp HP,1,-2 Stealth,"80,000c",,
+Platemail Helmet,TRUE,12 Fortitude,9 Temp HP,1,-2 Stealth,"80,000c",,
+Platemail Boots,TRUE,12 Fortitude,9 Temp HP,1,-2 Stealth,"80,000c",,

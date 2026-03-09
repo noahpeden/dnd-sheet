@@ -1,0 +1,31 @@
+,Has Weight,Requirement LA,Requirement RA,Hands,Range,Type,Actions,Damage,Cost,Ammo Type,Capacity,Reload Actions,EC,Defense Target,Notes,>Steel Variant
+Orb,TRUE,,,1H,1,Bludgeoning,X,0,"4,800c",,,,4,X,Contains a Wizard spell (up to 6th level) with unlimited use. Will shatter if used as a weapon.,
+Wand,,,,1H,1,Piercing,3,1,950c,,,,3,X,Extends the range of all spells cast by 3 spaces.,
+Handwraps,,,,Unarmed,1,Bludgeoning,2,U+1,12c,,,,6,Fortitude,,
+Dagger,,1 LA,,1H,1,Piercing,2,1d4,8c,,,,5,Fortitude,,X
+Knuckles,,1 LA,,Unarmed,1,Bludgeoning,2,U+2,30c,,,,3,Fortitude,,X
+Club,TRUE,1 LA,,1H,1,Bludgeoning,3,1d4+2,32c,,,,4,Fortitude,,X
+Throwing Axe,,2 LA,4 RA,1H,1/15,Slashing,3,1d4+2,85c,,,,3,Fortitude/Reflex,,X
+Spear,TRUE,2 LA,,2H,2,Piercing,3,1d4+2,100c,,,,6,Fortitude,,X
+Hammer,TRUE,2 LA,,1H,1,Bludgeoning,2,2d4,600c,,,,5,Fortitude,,X
+Javelin,TRUE,3 LA,3 RA,1H,1/10,Piercing,4,1d8,30c,,,,5,Fortitude/Reflex,,X
+Shortsword,TRUE,3 LA,,1H,1,Slashing,2,1d8,100c,,,,4,Fortitude,,X
+Quarterstaff,TRUE,3 LA,,2H,2,Bludgeoning,4,1d6+1,300c,,,,6,Fortitude,,
+Handaxe,TRUE,3 LA,,1H,1,Slashing,4,1d6+2,700c,,,,4,Fortitude,"Can be used to chop trees. Roll Athletics for timber, then Survival for amount.",X
+Sickle,TRUE,4 LA,,1H,1,Slashing,2,1d6+1,42c,,,,4,Fortitude,,X
+Gauntlets,TRUE,5 LA,,Unarmed,1,Bludgeoning,2,U+4,200c,,,,2,Fortitude,,X
+Bo Staff,TRUE,7 LA,,2H,2,Bludgeoning,3,1d10+1,"3,400c",,,,6,Fortitude,,
+Morningstar,TRUE,8 LA,,1H,1,Bludgeoning,3,1d8+2,300c,,,,2,Fortitude,,X
+Darts,,,1 RA,1H,10,Piercing,2,1d4,18c,,,,4,Reflex,,X
+Sling,,,2 RA,1H,15,Bludgeoning,5,1d4,7c,,,,5,Reflex,,
+Shortbow,TRUE,,2 RA,2H,20,Piercing,5,1d10+1,800c,Arrows,1,,6,Reflex,,X
+Flintlock,TRUE,,3 RA,1H,15,Piercing,2,1d8+1,"3,600c",Bullets,1,2,1,Reflex,,X
+Light Crossbow,TRUE,,4 RA,2H,25,Piercing,1,3d4,"1,400c",Bolts,1,5,4,Reflex,,X
+Shock Baton (I),TRUE,6 LA,,1H,1,Bludgeoning,4,1d6,"1,200c",,,,1,Fortitude,Target has -4 actions next turn. Does not stack.,X
+Stun Gun (I),TRUE,,3 RA,1H,10,Piercing,6,1d6,"1,700c",Taser (Included),1,1,,Fortitude+ Reflex+ Will,"Reduces target’s actions by 6 (takes 6 actions). Lasts up to 3 turns (Determined by target's Reflex, Fortitude, and Will).",
+Pistol (I),,,7 RA,1H,20,Piercing,2,1d6+2,"2,800c",Bullets,6,4,,Reflex,,X
+Revolver (I),TRUE,,10 RA,1H,10,Piercing,2,2d6+3,"2,500c",Bullets,8,9,,Reflex,,X
+SMG (I),TRUE,,13 RA,1H,15,Piercing,1,1d4,"4,300c",Bullets,36,6,,Reflex,Fires 3 bullets per action.,X
+,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,
+(I) Industrial,,,,,,,,,,,,,,,,

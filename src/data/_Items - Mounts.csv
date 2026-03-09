@@ -1,0 +1,32 @@
+Animal/Vehicle,HP,Speed,Capacity,Skill,Roll,Cost,Notes
+Buffalo,20,1,1,AH,6,"10,000c",
+Donkey,12,1,1,AH,8,"20,000c",
+Yak,16,1,3,AH,10,"30,000c",
+Mastiff,4,2,1,AH,10,"30,000c",Can only carry Small creatures
+Ostrich,12,2,1,AH,13,"40,000c",
+Dolphin,12,2,1,AH,14,"40,000c",Water based
+Horse,12,2,2,AH,10,"50,000c",
+Giant Tortoise,84,0.5,3,AH,16,"60,000c",Provides +3 Fortitude to all riders
+Reindeer,12,2,2,AH,17,"60,000c",Allows survivability in the tundra
+Camel,16,1,3,AH,12,"70,000c",Allows survivability in the desert
+Elephant,76,1,4,AH,14,"70,000c",
+Orca,88,2,5,AH,18,"80,000c",Water based
+Rowboat,12,1,4,P/D,6,"10,000c",Water based
+Keelboat,200,1,10,P/D,10,"70,000c",Water based
+Galley,600,2,50,P/D,14,"1,000,000c","Water based, requires 10+ Rowers"
+Motorcycle (I),24,4,2,P/D,12,"160,000c",
+Sedan (I),56,4,5,P/D,10,"380,000c",
+Pickup Truck (I),76,4,9,P/D,14,"450,000c",
+Semi Truck (I),168,3,30,P/D,16,"950,000c",
+,,,,,,,
+,,,,,,,
+,,,,,,,
+Spaceship,Shields,Reflex,Quarters,Cannons,Damage,Cost,Notes
+Battlestar,3000 HP,P/D+0,200,,(See Notes),"900,000,000c",Contains 40 Viper shuttles. Can launch all for 12 actions.
+Viper,80 HP,P/D+6,1,2 actions,3d6 laser,,
+X-Wing,100 HP,P/D+4,2,4 actions,5d4 laser,,"Contains 2 Proton Torpedoes, launched independently for 4d12 damage each."
+VAAT,500 HP,P/D+2,18,3 actions,3d8 laser,,Contains medikit station and 8 wire grapple stations.
+Omicron Shuttle,300 HP,P/D+7,8,6 actions,2d12 laser,,"Contains 2 aft turrets, fired independently for 2d6 damage each."
+Constitution,3000 HP,P/D+1,200,18 actions,8d12 laser,,"Contains 8 Proton Torpedoes, launched independently for 4d12 damage each."
+Firespray,400 HP,P/D+5,6,3 actions,4d6 laser,"80,000c","Contains 6 Ion Bombs, launched independently for 6d6 collateral."
+Firefly,200 HP,P/D+3,36,,,"100,000c",

@@ -1,0 +1,32 @@
+Name,Description,Price
+Paper,"Canvas for writing, drawing, and inscribing. 10 sheets.",1c
+Ink,"Used for writing, drawing, and inscribing. Enough for 20 sheets of paper.",1c
+Pen,"Tool for writing, drawing, and inscribing.",2c
+Cloth,Used to make clothing and cloth armor.,10c
+Wire,Used with cloth and leather to make clothes and armor.,20c
+Meat,Used with a Cooking Kit to make enough food to feed an adventurer one day. Presalted to last 3 days.,55c
+Wood,"Used for fletching, furnishing, and construction.",60c
+Herbs,"Used to make foods, beverages, and cloth.",75c
+Hide,"Used to make crude armor, or with a tanning kit to make leather.",80c
+Spices,Used with herbs/meat to make gourmet foods.,125c
+Minerals,Used with herbs/meat to make gourmet foods.,175c
+Leather,Used to make light armor.,200c
+Steel,"Used to forge metal items, weapons, and/or armor.",900c
+Alchemy Kit,Used with herbs to create potions and beverages. Reusable.,150c
+Pulping Kit,"Used with 1 wood to make 10 paper, or 100 paper to make a tome. Reusable.",250c
+Tanning Kit,Used with hide and wire to make leather. Reusable.,300c
+Processing Kit,Used with herbs to create cloth. Resuable.,350c
+Cooking Kit,"Used with fire, meat and/or herbs to cook food. Reusable.",400c
+Chef Kit,Used with meat/herbs with spices/minerals to cook gourmet food. Takes up weight. Reusable.,"1,000c"
+Silver,"Used to forge metal items, weapons, and/or armor.","1,100c"
+Duranium,Used to reinforce armor and spacefaring vehicles.,"1,100c"
+Adamantium,Used to make the strongest and heaviest weapons and armor. AKA Truesteel,"2,800c"
+Mithril,Used to make lighter and durable weapons and armor.,"2,800c"
+Protosteel,Used to make virtually unbreakable weapons and armor.,"2,800c"
+Vibranium,Used to make mighty and mystical weapons and armor.,"2,800c"
+Chipped Gem,Used for jewellry and socketing in level 1 enchantments.,500c
+Flawed Gem,Used for jewellry and socketing in level 2 enchantments.,"1,000c"
+Gem,Used for jewellry and socketing in level 3 enchantments.,"2,000c"
+Flawless Gem,Used for jewellry and socketing in level 4 enchantments.,"4,000c"
+Brilliant Gem,Used for jewellry and socketing in level 5 enchantments.,"8,000c"
+Perfect Gem,Used for jewellry and socketing in level 6 enchantments.,"16,000c"

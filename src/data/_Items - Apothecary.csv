@@ -1,0 +1,46 @@
+Item,Potion Type,Description,Price
+Flask,Container,Holds a liquid.,10c
+Vial,Container,Holds a liquid.,10c
+Canteen,Container,Holds a liquid.,10c
+Bottle,Container,Holds a liquid.,10c
+Beaker,Container,Holds a liquid.,10c
+Minor Healing Potion,Healing,Heals 4 HP.,28c
+Light Healing Potion,Healing,Heals 8 HP.,86c
+Healing Potion,Healing,Heals 12 HP.,300c
+Greater Healing Potion,Healing,Heals 16 HP.,900c
+Powerful Healing Potion,Healing,Heals 20 HP.,"2,400c"
+Exhaust Poison,Poison,"The drinker takes a -4 penalty to Acrobatics, Arcana, Athletics, and all Attacks.",200c
+Sick Poison,Poison,Makes the drinker sick. They must spend 3 actions to vomit each turn.,300c
+Confusion Poison,Poison,"The drinker cannot distinguish friend from foe, and will attack the closest being.",400c
+Fear Poison,Poison,The drinker runs around in terror.,400c
+Lethal Poison,Poison,The drinker takes 1d4 damage at the start of every turn. Stacks.,500c
+Fatigue Poison,Poison,The drinker loses 1 action each turn. This effect stacks until they reach 0 actions.,600c
+Knockout Poison,Poison,"The drinker goes to sleep for an hour. If they are attacked, they wake instantly.",700c
+Paralysis Poison,Poison,"The drinker loses 6 actions for the next 6 turns, with the penalty decreasing by 1 action each turn.","1,200c"
+Antidote,Mythic,The drinker is cured of all poisons affecting them.,800c
+Elongation Potion,Mythic,Any buffs placed on the drinker last the rest of the day.,"10,000c"
+Stoneskin Potion,Mythic,The drinker gains +2 Armor and cannot be poisoned for 10 turns.,"10,000c"
+Feather Potion,Mythic,The drinker cannot take falling/impact damage for 10 turns.,"10,000c"
+Rejuvenation Potion,Mythic,The drinker heals 1d4 HP per turn until they are at full HP or they die.,"10,000c"
+Invisibility Potion,Mythic,The drinker becomes invisible for 10 turns/minutes.,"10,000c"
+Wings Potion,Mythic,The drinker sprouts wings that last for 10 turns.,"10,000c"
+Waterbreathing Potion,Mythic,The drinker can breathe underwater as easily as in air for 1 hour.,"10,000c"
+Love Potion,Mythic,"The drinker falls in love with the first person they see, answering their every demand for 1 hour.","10,000c"
+Strength Potion,Mythic,"The drinker brings their Athletics and Heavy Attack skills to 20, no matter where they were before, for 10 turns.","10,000c"
+Arcane Potion,Mythic,The drinker has their spirit removed from their body to walk the Arcane Realm for 1 hour.,"20,000c"
+Memory Potion,Mythic,The drinker regains 1 of their used Abilities.,"20,000c"
+Lucky Potion,Mythic,The drinker can take the higher of 2d20 for all rolls for 10 turns.,"20,000c"
+Poison Bomb,Bomb,"Poisons everyone in a 3x3-space area, making them take 1d4 damage at the start of each turn.","5,600c"
+Acid Bomb,Bomb,"Deals 1d6 damage to everyone in a 5x5-space area. For the next 3 turns, everyone affected loses 1 Armor each turn.","5,600c"
+Frost Bomb,Bomb,Deals 1d8 damage to everyone in a 3x3-space area and slows them by 3 Speed for 3 turns.,"5,600c"
+Healing Bomb,Bomb,Heals everyone in a 3x3-space area for 12 HP.,"30,000c"
+Scatter Bomb,Bomb,Pushes back everyone within 2 spaces up to 5 spaces away from point of impact.,"30,000c"
+Flashbang,Bomb,Stuns everyone in a 3x3-space area for 1 turn.,"30,000c"
+Sticky Bomb,Bomb,Covers a 4x4-space area in a sticky substance for 3 turns. Nobody in this area can move.,"30,000c"
+,,,
+,,,
+,Mythic Potions: Each potion has 1 use.,,
+,Bomb Potions: Requires enough impact to shatter its container.,,
+,Healing Potions: Each potion has 1 use.,,
+,Poisons: Each vial has 5 doses.,,
+,Liquid Containers,,
