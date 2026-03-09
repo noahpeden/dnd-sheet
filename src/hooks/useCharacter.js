@@ -12,10 +12,11 @@ export function useCharacter(characterId) {
   const [localData, setLocalData] = useState(null);
   const pendingUpdates = useRef({});
   const saveTimer = useRef(null);
+  const inFlight = useRef(false);
 
   // Sync from Convex → local when server data arrives and no pending save
   useEffect(() => {
-    if (character && !saveTimer.current) {
+    if (character && !saveTimer.current && !inFlight.current) {
       setLocalData(character);
     }
   }, [character]);
@@ -31,8 +32,11 @@ export function useCharacter(characterId) {
       saveTimer.current = null;
       if (characterId && Object.keys(updates).length > 0) {
         try {
+          inFlight.current = true;
           await updateMutation({ characterId, fields: updates });
+          inFlight.current = false;
         } catch (e) {
+          inFlight.current = false;
           console.error("Failed to save to Convex:", e);
         }
       }

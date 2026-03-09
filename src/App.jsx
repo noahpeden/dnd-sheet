@@ -611,6 +611,18 @@ function CharacterSheet({ characterId, onBack }) {
   const updateInvItem = (folderId, itemId, field, value) => {
     setInventoryFolders((prev) => prev.map((f) => f.id === folderId ? { ...f, items: f.items.map((i) => i.id === itemId ? { ...i, [field]: value } : i) } : f));
   };
+
+  const updateInventoryItem = useCallback((itemId, field, value) => {
+    setInventory((prev) => prev.map((i) => i.id === itemId ? { ...i, [field]: value } : i));
+  }, []);
+
+  const deleteInventoryItem = useCallback((itemId) => {
+    setInventory((prev) => prev.filter((i) => i.id !== itemId));
+    const next = { ...bodySlotsRef.current };
+    Object.keys(next).forEach((s) => { if (next[s] === itemId) next[s] = null; });
+    updateField("bodySlots", next);
+  }, []);
+
   const [notesSubTab, setNotesSubTab] = useState("character");
   const [sessionSearch, setSessionSearch] = useState("");
   const [expandedSession, setExpandedSession] = useState(null);
@@ -1814,19 +1826,31 @@ function CharacterSheet({ characterId, onBack }) {
             {invActiveFolder === "equipment" && (
               <div>
                 <Section t={t} title="Equipment — Synced with Loadout" accent={t.accent3}>
-                  {inventory.map((item, i) => {
+                  {inventory.map((item) => {
                     const eqSlot = getEquippedSlot(item.id);
                     return (
                       <div key={item.id} className="mb-3 p-2 rounded" style={{ background: "rgba(196,169,106,0.04)", borderLeft: eqSlot ? `3px solid ${t.primary}` : `3px solid ${t.accent3}33` }}>
-                        <div className="grid grid-cols-3 gap-2 mb-1">
-                          <div>
+                        {/* Row 1: name, qty, delete */}
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
                             <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>{eqSlot ? `Equipped: ${getSlotLabel(eqSlot)}` : "Unequipped"}</span>
-                            <input value={item.name} onChange={(e) => { const inv = [...inventory]; inv[i] = { ...inv[i], name: e.target.value }; setInventory(inv); }}
+                            <input value={item.name} onChange={(e) => updateInventoryItem(item.id, "name", e.target.value)}
                               className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim, color: t.accent3, fontSize: "0.8rem", fontWeight: 600 }} />
                           </div>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, flexShrink: 0 }}>
+                            <span style={{ fontSize: "0.45rem", color: t.primaryDim, textTransform: "uppercase" }}>Qty</span>
+                            <input type="number" value={item.qty ?? 1} onChange={(e) => updateInventoryItem(item.id, "qty", Math.max(1, +e.target.value || 1))}
+                              className="bg-transparent border-b outline-none text-center"
+                              style={{ width: 36, borderColor: t.primaryDim + "66", color: t.primaryLight, fontSize: "0.75rem" }} />
+                          </div>
+                          <button onClick={() => { if (confirm(`Delete "${item.name}"?`)) deleteInventoryItem(item.id); }}
+                            style={{ flexShrink: 0, background: "none", border: "none", color: t.dangerLight + "66", fontSize: "0.75rem", cursor: "pointer", padding: "0 2px", alignSelf: "flex-end" }}>✕</button>
+                        </div>
+                        {/* Row 2: stats + bonuses */}
+                        <div className="grid grid-cols-2 gap-2 mb-1">
                           <div>
                             <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Stats</span>
-                            <input value={item.stats} onChange={(e) => { const inv = [...inventory]; inv[i] = { ...inv[i], stats: e.target.value }; setInventory(inv); }}
+                            <input value={item.stats} onChange={(e) => updateInventoryItem(item.id, "stats", e.target.value)}
                               className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim, color: t.primaryLight, fontSize: "0.8rem" }} />
                           </div>
                           <div>
@@ -1841,13 +1865,34 @@ function CharacterSheet({ characterId, onBack }) {
                         </div>
                         <div>
                           <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Notes & Enchantments</span>
-                          <textarea value={item.notes} onChange={(e) => { const inv = [...inventory]; inv[i] = { ...inv[i], notes: e.target.value }; setInventory(inv); }}
+                          <textarea value={item.notes} onChange={(e) => updateInventoryItem(item.id, "notes", e.target.value)}
                             rows={2} className="w-full bg-transparent border outline-none rounded px-1" style={{ borderColor: t.primaryDim + "55", color: t.textDim, fontSize: "0.75rem" }} />
                         </div>
                       </div>
                     );
                   })}
-                  <p style={{ fontSize: "0.55rem", color: t.primaryDim, fontStyle: "italic", marginTop: 4 }}>Equipment items are added via the Equipment Loadout section above. Changes here sync automatically.</p>
+                  {/* Add custom item */}
+                  <div style={{ borderTop: `1px solid ${t.primaryDim}22`, paddingTop: 8, marginTop: 4, display: "flex", gap: 6, alignItems: "flex-end", flexWrap: "wrap" }}>
+                    <div style={{ flex: 1, minWidth: 100 }}>
+                      <span style={{ fontSize: "0.45rem", color: t.primaryDim, textTransform: "uppercase", letterSpacing: "0.08em" }}>Name</span>
+                      <input value={newItemForm.name} onChange={(e) => setNewItemForm((p) => ({ ...p, name: e.target.value }))}
+                        placeholder="Custom item..." onKeyDown={(e) => { if (e.key === "Enter") addNewItem(); }}
+                        className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim + "55", color: t.text, fontSize: "0.7rem" }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 80 }}>
+                      <span style={{ fontSize: "0.45rem", color: t.primaryDim, textTransform: "uppercase", letterSpacing: "0.08em" }}>Stats</span>
+                      <input value={newItemForm.stats} onChange={(e) => setNewItemForm((p) => ({ ...p, stats: e.target.value }))}
+                        placeholder="DMG, AC, etc..." className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim + "55", color: t.text, fontSize: "0.7rem" }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 80 }}>
+                      <span style={{ fontSize: "0.45rem", color: t.primaryDim, textTransform: "uppercase", letterSpacing: "0.08em" }}>Notes</span>
+                      <input value={newItemForm.notes} onChange={(e) => setNewItemForm((p) => ({ ...p, notes: e.target.value }))}
+                        placeholder="Notes..." className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim + "55", color: t.text, fontSize: "0.7rem" }} />
+                    </div>
+                    <button onClick={addNewItem} style={{ flexShrink: 0, padding: "4px 10px", borderRadius: 5, background: t.primaryDark, color: t.primaryLight, border: `1px solid ${t.primaryDim}44`, fontSize: "0.6rem", cursor: "pointer" }}>
+                      + Add Item
+                    </button>
+                  </div>
                 </Section>
               </div>
             )}
@@ -1998,11 +2043,20 @@ function CharacterSheet({ characterId, onBack }) {
                       </div>
                       <button
                         onClick={() => {
+                          const cost = (() => {
+                            if (!item.price || item.price === "—") return 0;
+                            const match = item.price.replace(/,/g, "").match(/\d+/);
+                            return match ? parseInt(match[0], 10) : 0;
+                          })();
                           const id = "cat_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: activeCat.category, bonuses: {}, bonusNotes: {} }]);
+                          const weaponCats = ["Light Weapons", "Heavy Weapons", "Finesse Weapons"];
+                          const armorCats = ["Armor", "Shields"];
+                          const invCategory = weaponCats.includes(activeCat.category) ? "weapons" : armorCats.includes(activeCat.category) ? "armor" : "misc";
+                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses: {}, bonusNotes: {} }]);
+                          if (cost > 0) setCurrency((p) => ({ ...p, cr: Math.max(0, (p.cr ?? 0) - cost) }));
                         }}
                         style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 5, border: `1px solid ${t.primary}66`, background: `${t.primary}22`, color: t.primary, fontSize: "var(--ty-label-size)", cursor: "pointer", whiteSpace: "nowrap" }}>
-                        + Add
+                        Buy
                       </button>
                     </div>
                   ))}
