@@ -342,6 +342,7 @@ const BLANK_FOLDERS = [
   { id: "equipment", name: "Equipment", icon: "⚔", locked: true, items: [] },
   { id: "carried",   name: "Carried",   icon: "🧳", locked: false, items: [] },
 ];
+
 /* ─── CHARACTER SELECT SCREEN ─── */
 function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
   const p = THEME_PRESETS.forest;
