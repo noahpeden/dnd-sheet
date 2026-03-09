@@ -13,11 +13,15 @@ export function useCharacter(characterId) {
   const pendingUpdates = useRef({});
   const saveTimer = useRef(null);
   const inFlight = useRef(false);
+  const initialSynced = useRef(false);
 
-  // Sync from Convex → local when server data arrives and no pending save
+  // Sync from Convex → local ONLY on initial load.
+  // After the first sync, all state is managed locally to prevent
+  // subscription updates from overwriting in-flight optimistic changes.
   useEffect(() => {
-    if (character && !saveTimer.current && !inFlight.current) {
+    if (character && !initialSynced.current) {
       setLocalData(character);
+      initialSynced.current = true;
     }
   }, [character]);
 

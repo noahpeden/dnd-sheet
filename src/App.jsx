@@ -192,6 +192,11 @@ function DraggableSlot({ slot, equippedItem, onDrop, onRemove, onMove, onDelete,
           <span style={{ fontSize: "0.5rem", color: accent ? accent + "cc" : "#c8e6c9", fontWeight: 700, textAlign: "center", lineHeight: 1.1, fontFamily: "Arial, sans-serif", maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", width: "100%", padding: "0 2px" }}>
             {equippedItem.name}
           </span>
+          {(equippedItem.enchantments || []).length > 0 && (
+            <span style={{ fontSize: "0.35rem", color: accent ? accent + "99" : "#4a7c59cc", textAlign: "center", lineHeight: 1.1, fontFamily: "Arial, sans-serif", maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", width: "100%", padding: "0 2px" }}>
+              {equippedItem.enchantments.map((e) => e.name).join(" · ")}
+            </span>
+          )}
           <span style={{ fontSize: "0.4rem", color: accent ? accent + "88" : "#7a9e7e", textAlign: "center", lineHeight: 1, fontFamily: "Arial, sans-serif" }}>{label}</span>
           <button data-nodrag="true" onClick={(e) => { e.stopPropagation(); onRemove(slot.id); }}
             style={{ fontSize: "0.4rem", color: "#ce6b6b", cursor: "pointer", background: "none", border: "none", padding: 0, marginTop: 1, fontFamily: "Arial, sans-serif" }}>[unequip]</button>
@@ -222,6 +227,11 @@ function DragItem({ item, isEquipped, equippedSlotLabel }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: "0.7rem", color: "#e8e0d0", fontWeight: 600, fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</div>
         <div style={{ fontSize: "0.55rem", color: "#7a9e7e", fontFamily: "Arial, sans-serif" }}>{isEquipped ? `Equipped → ${equippedSlotLabel}` : item.stats}</div>
+        {(item.enchantments || []).length > 0 && (
+          <div style={{ fontSize: "0.5rem", color: "#4a7c59cc", fontFamily: "Arial, sans-serif", marginTop: 1 }}>
+            ✦ {item.enchantments.map((e) => e.name).join(" · ")}
+          </div>
+        )}
       </div>
       {!isEquipped && <span style={{ fontSize: "0.5rem", color: "#3a5a4088", fontFamily: "Arial, sans-serif" }}>DRAG</span>}
     </div>
@@ -342,6 +352,23 @@ const BLANK_FOLDERS = [
   { id: "equipment", name: "Equipment", icon: "⚔", locked: true, items: [] },
   { id: "carried",   name: "Carried",   icon: "🧳", locked: false, items: [] },
 ];
+
+/* ─── ENCHANTMENT HELPERS ─── */
+// Parse EC capacity from an item's stats string, e.g. "1H | EC: 6 | DEF: ..." → 6
+const parseEC = (stats) => {
+  if (!stats) return 0;
+  const m = stats.match(/EC:\s*(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+};
+// Parse what an enchantment can be applied to from its stats string
+// "Armor | EC: 1 | ..." → "armor"  "Weapons | ..." → "weapons"  "Weapons/Armor | ..." → "both"
+const parseEnchType = (stats) => {
+  if (!stats) return null;
+  if (/^Weapons\/Armor/i.test(stats)) return "both";
+  if (/^Weapons/i.test(stats)) return "weapons";
+  if (/^Armor/i.test(stats)) return "armor";
+  return null;
+};
 
 /* ─── CHARACTER SELECT SCREEN ─── */
 function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
@@ -495,8 +522,10 @@ function CharacterSheet({ characterId, onBack }) {
   };
   const setTextStyle = (cat, field, val) => setTextStyles((p) => ({ ...p, [cat]: { ...p[cat], [field]: val } }));
   const setThemeColor = (key, value) => setTheme({ ...theme, [key]: value });
-  const [newItemForm, setNewItemForm] = useState({ name: "", stats: "", notes: "", bonusSkill: "", bonusValue: 0, bonusNote: "", category: "misc" });
+  const [newItemForm, setNewItemForm] = useState({ name: "", stats: "", notes: "", bonusSkill: "", bonusValue: 0, bonusNote: "", category: "misc", ecCap: 0 });
   const [inventoryTab, setInventoryTab] = useState("all");
+  const [enchantPicker, setEnchantPicker] = useState(null); // { enchantment, cost, fillsEC, enchType }
+  const [enchantTypeFilter, setEnchantTypeFilter] = useState("all"); // "all" | "armor" | "weapons" | "both"
   const [bgImage, setBgImage] = useState(null);
   const [newSlotLabel, setNewSlotLabel] = useState("");
   const canvasRef = useRef(null);
@@ -622,6 +651,12 @@ function CharacterSheet({ characterId, onBack }) {
     const next = { ...bodySlotsRef.current };
     Object.keys(next).forEach((s) => { if (next[s] === itemId) next[s] = null; });
     updateField("bodySlots", next);
+  }, []);
+
+  const removeEnchantment = useCallback((itemId, enchId) => {
+    setInventory((prev) => prev.map((i) =>
+      i.id === itemId ? { ...i, enchantments: (i.enchantments || []).filter((e) => e.id !== enchId) } : i
+    ));
   }, []);
 
   const [notesSubTab, setNotesSubTab] = useState("character");
@@ -827,8 +862,9 @@ function CharacterSheet({ characterId, onBack }) {
       bonuses[newItemForm.bonusSkill] = newItemForm.bonusValue;
       if (newItemForm.bonusNote) bonusNotes[newItemForm.bonusSkill] = newItemForm.bonusNote;
     }
-    setInventory((prev) => [...prev, { id, name: newItemForm.name, stats: newItemForm.stats, notes: newItemForm.notes, category: newItemForm.category || "misc", bonuses, bonusNotes }]);
-    setNewItemForm({ name: "", stats: "", notes: "", bonusSkill: "", bonusValue: 0, bonusNote: "", category: "misc" });
+    const ecCap = newItemForm.ecCap > 0 ? newItemForm.ecCap : parseEC(newItemForm.stats);
+    setInventory((prev) => [...prev, { id, name: newItemForm.name, stats: newItemForm.stats, notes: newItemForm.notes, category: newItemForm.category || "misc", bonuses, bonusNotes, ecCap, enchantments: [] }]);
+    setNewItemForm({ name: "", stats: "", notes: "", bonusSkill: "", bonusValue: 0, bonusNote: "", category: "misc", ecCap: 0 });
   };
 
   /* ─── Ability drag reordering ─── */
@@ -1865,10 +1901,37 @@ function CharacterSheet({ characterId, onBack }) {
                           </div>
                         </div>
                         <div>
-                          <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Notes & Enchantments</span>
+                          <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Notes</span>
                           <textarea value={item.notes} onChange={(e) => updateInventoryItem(item.id, "notes", e.target.value)}
                             rows={2} className="w-full bg-transparent border outline-none rounded px-1" style={{ borderColor: t.primaryDim + "55", color: t.textDim, fontSize: "0.75rem" }} />
                         </div>
+                        {/* Enchantments section */}
+                        {(item.ecCap > 0) && (() => {
+                          const usedEC = (item.enchantments || []).reduce((sum, e) => sum + (e.fillsEC || 0), 0);
+                          const remainEC = item.ecCap - usedEC;
+                          return (
+                            <div style={{ marginTop: 6, padding: "5px 7px", borderRadius: 5, background: "rgba(74,124,89,0.06)", border: `1px solid ${t.primaryDim}33` }}>
+                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
+                                <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Enchantments</span>
+                                <span style={{ fontSize: "0.5rem", color: remainEC > 0 ? t.primary : "#ce6b6b", fontWeight: 600 }}>{usedEC}/{item.ecCap} EC</span>
+                              </div>
+                              {(item.enchantments || []).length === 0 && (
+                                <span style={{ fontSize: "0.6rem", color: t.primaryDim, fontStyle: "italic" }}>No enchantments</span>
+                              )}
+                              {(item.enchantments || []).map((e) => (
+                                <div key={e.id} style={{ display: "flex", alignItems: "flex-start", gap: 4, marginBottom: 3 }}>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <span style={{ fontSize: "0.6rem", color: t.primaryLight, fontWeight: 600 }}>{e.name}</span>
+                                    {e.description && <span style={{ fontSize: "0.55rem", color: t.textDim, marginLeft: 5 }}>{e.description}</span>}
+                                  </div>
+                                  <span style={{ fontSize: "0.5rem", color: t.primaryDim, flexShrink: 0 }}>EC:{e.fillsEC}</span>
+                                  <button onClick={() => removeEnchantment(item.id, e.id)}
+                                    style={{ background: "none", border: "none", color: "#ce6b6b88", fontSize: "0.55rem", cursor: "pointer", padding: 0, flexShrink: 0 }}>✕</button>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     );
                   })}
@@ -1986,9 +2049,16 @@ function CharacterSheet({ characterId, onBack }) {
         {tab === "items" && (() => {
           const activeCat = ITEM_CATALOG.find((c) => c.category === itemsCategory) ?? ITEM_CATALOG[0];
           const query = itemsSearch.trim().toLowerCase();
-          const visibleItems = query
-            ? ITEM_CATALOG.flatMap((c) => c.items.filter((i) => i.name.toLowerCase().includes(query) || i.description.toLowerCase().includes(query)))
-            : activeCat.items;
+          const isEnchantments = activeCat.category === "Enchantments" && !query;
+          const visibleItems = (() => {
+            let items = query
+              ? ITEM_CATALOG.flatMap((c) => c.items.filter((i) => i.name.toLowerCase().includes(query) || i.description.toLowerCase().includes(query)))
+              : activeCat.items;
+            if (isEnchantments && enchantTypeFilter !== "all") {
+              items = items.filter((i) => parseEnchType(i.stats) === enchantTypeFilter);
+            }
+            return items;
+          })();
           return (
             <div className="pt-3 tab-content" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {/* Currency */}
@@ -2029,6 +2099,27 @@ function CharacterSheet({ characterId, onBack }) {
                 )}
                 {/* Item list */}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto", maxHeight: 420, paddingRight: 2 }}>
+                  {/* Enchantment type filter */}
+                  {isEnchantments && (
+                    <div style={{ display: "flex", gap: 4, marginBottom: 4, flexWrap: "wrap" }}>
+                      {[
+                        { key: "all", label: "All" },
+                        { key: "armor", label: "Armor" },
+                        { key: "weapons", label: "Weapons" },
+                        { key: "both", label: "Weapons/Armor" },
+                      ].map(({ key, label }) => (
+                        <button key={key} onClick={() => setEnchantTypeFilter(key)}
+                          style={{
+                            padding: "2px 10px", borderRadius: 4, fontSize: "var(--ty-label-size)", cursor: "pointer", border: "none",
+                            background: enchantTypeFilter === key ? `${t.primary}44` : `${t.primary}11`,
+                            color: enchantTypeFilter === key ? t.primaryLight : t.primaryDim,
+                            fontWeight: enchantTypeFilter === key ? 700 : 400,
+                          }}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {visibleItems.length === 0 && (
                     <span style={{ color: t.textDim, fontSize: "var(--ty-body-size)", padding: 8 }}>No items found.</span>
                   )}
@@ -2049,11 +2140,18 @@ function CharacterSheet({ characterId, onBack }) {
                             const match = item.price.replace(/,/g, "").match(/\d+/);
                             return match ? parseInt(match[0], 10) : 0;
                           })();
+                          if (activeCat.category === "Enchantments") {
+                            const fillsEC = parseEC(item.stats);
+                            const enchType = parseEnchType(item.stats);
+                            setEnchantPicker({ enchantment: item, cost, fillsEC, enchType });
+                            return;
+                          }
                           const id = "cat_" + Date.now() + "_" + Math.random().toString(36).slice(2);
                           const weaponCats = ["Light Weapons", "Heavy Weapons", "Finesse Weapons"];
                           const armorCats = ["Armor", "Shields"];
                           const invCategory = weaponCats.includes(activeCat.category) ? "weapons" : armorCats.includes(activeCat.category) ? "armor" : "misc";
-                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses: {}, bonusNotes: {} }]);
+                          const ecCap = parseEC(item.stats);
+                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses: {}, bonusNotes: {}, ecCap, enchantments: [] }]);
                           if (cost > 0) setCurrency((p) => ({ ...p, cr: Math.max(0, (p.cr ?? 0) - cost) }));
                         }}
                         style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 5, border: `1px solid ${t.primary}66`, background: `${t.primary}22`, color: t.primary, fontSize: "var(--ty-label-size)", cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -2235,6 +2333,95 @@ function CharacterSheet({ characterId, onBack }) {
           </div>
         )}
       </div>
+
+      {/* ═══ ENCHANTMENT PICKER MODAL ═══ */}
+    {enchantPicker && (() => {
+      const { enchantment, cost, fillsEC, enchType } = enchantPicker;
+      const compatibleItems = inventory.filter((i) => {
+        const isWeapon = i.category === "weapons";
+        const isArmor = i.category === "armor";
+        if (enchType === "weapons" && !isWeapon) return false;
+        if (enchType === "armor" && !isArmor) return false;
+        if (enchType === "both" && !isWeapon && !isArmor) return false;
+        return (i.ecCap || 0) > 0;
+      });
+      return (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setEnchantPicker(null); }}>
+          <div style={{ background: "#0d1a0d", border: "1.5px solid #4a7c59", borderRadius: 10, padding: "20px 24px", width: 400, maxWidth: "90vw", maxHeight: "80vh", display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ fontSize: "0.9rem", color: "#c8e6c9", fontWeight: 700 }}>{enchantment.name}</div>
+                <div style={{ fontSize: "0.6rem", color: "#4a7c59", marginTop: 2 }}>{enchantment.stats}</div>
+                <div style={{ fontSize: "0.6rem", color: "#7a9e7e", marginTop: 2, fontStyle: "italic" }}>{enchantment.description}</div>
+              </div>
+              <button onClick={() => setEnchantPicker(null)}
+                style={{ background: "none", border: "none", color: "#ce6b6b88", fontSize: "1rem", cursor: "pointer", padding: 0, lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ fontSize: "0.6rem", color: "#7a9e7e", borderTop: "1px solid #3a5a4033", paddingTop: 8 }}>
+              Select which item to enchant. This uses <strong style={{ color: "#c8e6c9" }}>{fillsEC} EC</strong>.
+              {enchType === "armor" && " (Armor enchantments only)"}
+              {enchType === "weapons" && " (Weapon enchantments only)"}
+            </div>
+            {/* Item list */}
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
+              {compatibleItems.length === 0 && (
+                <div style={{ color: "#7a9e7e66", fontSize: "0.65rem", fontStyle: "italic", textAlign: "center", padding: 12 }}>
+                  No compatible items in your inventory with available EC.
+                  {enchType === "armor" ? " Buy some armor or shields first." : enchType === "weapons" ? " Buy some weapons first." : " Buy a weapon or armor first."}
+                </div>
+              )}
+              {compatibleItems.map((i) => {
+                const usedEC = (i.enchantments || []).reduce((sum, e) => sum + (e.fillsEC || 0), 0);
+                const remainEC = i.ecCap - usedEC;
+                const canFit = remainEC >= fillsEC;
+                return (
+                  <button key={i.id} disabled={!canFit}
+                    onClick={() => {
+                      const enchId = "ench_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+                      setInventory((prev) => prev.map((inv) =>
+                        inv.id === i.id
+                          ? { ...inv, enchantments: [...(inv.enchantments || []), { id: enchId, name: enchantment.name, fillsEC, description: enchantment.description }] }
+                          : inv
+                      ));
+                      if (cost > 0) setCurrency((p) => ({ ...p, cr: Math.max(0, (p.cr ?? 0) - cost) }));
+                      setEnchantPicker(null);
+                    }}
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "8px 12px", borderRadius: 7,
+                      background: canFit ? "rgba(74,124,89,0.1)" : "rgba(206,107,107,0.05)",
+                      border: canFit ? "1px solid #4a7c5944" : "1px solid #ce6b6b22",
+                      cursor: canFit ? "pointer" : "not-allowed",
+                      opacity: canFit ? 1 : 0.5,
+                      textAlign: "left",
+                    }}>
+                    <div>
+                      <div style={{ fontSize: "0.7rem", color: "#c8e6c9", fontWeight: 600 }}>{i.name}</div>
+                      <div style={{ fontSize: "0.55rem", color: "#7a9e7e", marginTop: 1 }}>
+                        {(i.enchantments || []).map((e) => e.name).join(", ") || "No enchantments"}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 8 }}>
+                      <div style={{ fontSize: "0.6rem", fontWeight: 700, color: canFit ? "#4a7c59" : "#ce6b6b" }}>{remainEC}/{i.ecCap} EC free</div>
+                      {!canFit && <div style={{ fontSize: "0.5rem", color: "#ce6b6b88" }}>needs {fillsEC} EC</div>}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, borderTop: "1px solid #3a5a4033", paddingTop: 8 }}>
+              <div style={{ fontSize: "0.6rem", color: "#7a9e7e", alignSelf: "center" }}>Cost: {enchantment.price}</div>
+              <button onClick={() => setEnchantPicker(null)}
+                style={{ padding: "5px 14px", borderRadius: 5, background: "transparent", color: "#7a9e7e", border: "1px solid #3a5a4066", fontSize: "0.65rem", cursor: "pointer" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    })()}
     </div>
   );
 }
