@@ -601,7 +601,7 @@ function CharacterSheet({ characterId, onBack }) {
   }, [bodySlots, inventory]);
 
   const getEquippedSlot = (itemId) => { for (const [slot, id] of Object.entries(bodySlots)) { if (id === itemId) return slot; } return null; };
-  const equipableItems = inventory.filter((i) => i.category === "weapons" || i.category === "armor");
+  const equipableItems = inventory.filter((i) => i.category === "weapons" || i.category === "armor" || i.category === "misc");
   const getSlotLabel = (slotId) => { const s = slotPositions.find((p) => p.id === slotId); return s?.label || slotId; };
 
   /* ─── Other State ─── */
@@ -1258,7 +1258,7 @@ function CharacterSheet({ characterId, onBack }) {
 
               {/* Category sub-tabs — only weapons/armor are drag-droppable */}
               <div className="flex gap-1">
-                {[{ key: "all", label: "All" }, { key: "weapons", label: "Weapons" }, { key: "armor", label: "Armor" }].map((ct) => {
+                {[{ key: "all", label: "All" }, { key: "weapons", label: "Weapons" }, { key: "armor", label: "Armor" }, { key: "misc", label: "Misc" }].map((ct) => {
                   const count = ct.key === "all" ? equipableItems.length : equipableItems.filter((i) => i.category === ct.key).length;
                   return (
                     <button key={ct.key} onClick={() => setInventoryTab(ct.key)} className="cursor-pointer px-2 py-1 rounded"
