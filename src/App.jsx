@@ -1,6 +1,8 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import * as pdfjsLib from "pdfjs-dist";
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).href;
 import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useCharacter } from "./hooks/useCharacter";
 import { BLANK_CHARACTER, HUGH_JASS_SEED, DEFAULT_TEXT_STYLES } from "./characterDefaults";
@@ -371,9 +373,10 @@ const parseEnchType = (stats) => {
 };
 
 /* ─── CHARACTER SELECT SCREEN ─── */
-function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
+function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete, onImportPDF }) {
   const p = THEME_PRESETS.forest;
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const pdfInputRef = useRef(null);
 
   return (
     <div style={{ minHeight: "100vh", background: `linear-gradient(160deg, ${p.bgDark} 0%, ${p.bgMid} 50%, ${p.bgDark} 100%)`, fontFamily: "Arial, sans-serif", color: p.text, display: "flex", flexDirection: "column", alignItems: "center", padding: "48px 24px" }}>
@@ -427,6 +430,17 @@ function CharacterSelectScreen({ characters, onCreate, onOpen, onDelete }) {
           <div style={{ fontSize: "1.4rem", color: p.primaryDim }}>+</div>
           <div style={{ fontSize: "0.7rem", color: p.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>New Character</div>
         </div>
+
+        {/* Import from PDF card */}
+        <div onClick={() => pdfInputRef.current?.click()} style={{ cursor: "pointer", borderRadius: 10, border: `1.5px dashed ${p.primaryDim}`, background: "transparent", padding: "20px 16px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 120, transition: "all 0.2s", gap: 8 }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = p.primary; e.currentTarget.style.background = `${p.primary}0d`; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = p.primaryDim; e.currentTarget.style.background = "transparent"; }}>
+          <div style={{ fontSize: "1.2rem", color: p.primaryDim }}>📄</div>
+          <div style={{ fontSize: "0.7rem", color: p.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Import from PDF</div>
+          <div style={{ fontSize: "0.55rem", color: p.primaryDim, textAlign: "center" }}>Upload an existing character sheet</div>
+          <input ref={pdfInputRef} type="file" accept=".pdf" style={{ display: "none" }}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) { e.target.value = ""; onImportPDF(f); } }} />
+        </div>
       </div>
     </div>
   );
@@ -454,6 +468,8 @@ function CharacterSheet({ characterId, onBack }) {
   const hpCurrent = hp.current;
   const hpTemp = hp.temp;
   const inventory = character?.inventory ?? [];
+  const inventoryRef = useRef(inventory);
+  inventoryRef.current = inventory;
   const slotPositions = character?.slotPositions ?? DEFAULT_SLOT_POSITIONS;
   const bodySlots = character?.bodySlots ?? BLANK_CHARACTER.bodySlots;
   const slotPositionsRef = useRef(slotPositions);
@@ -483,7 +499,7 @@ function CharacterSheet({ characterId, onBack }) {
   const setHpCurrent = (v) => updateField("hp", { ...hp, current: v });
   const setHpTemp = (v) => updateField("hp", { ...hp, temp: v });
   const setInventory = (v) => {
-    if (typeof v === "function") updateField("inventory", v(inventory));
+    if (typeof v === "function") updateField("inventory", v(inventoryRef.current));
     else updateField("inventory", v);
   };
   const setSlotPositions = (v) => {
@@ -585,6 +601,7 @@ function CharacterSheet({ characterId, onBack }) {
   }, [bodySlots, inventory]);
 
   const getEquippedSlot = (itemId) => { for (const [slot, id] of Object.entries(bodySlots)) { if (id === itemId) return slot; } return null; };
+  const equipableItems = inventory.filter((i) => i.category === "weapons" || i.category === "armor");
   const getSlotLabel = (slotId) => { const s = slotPositions.find((p) => p.id === slotId); return s?.label || slotId; };
 
   /* ─── Other State ─── */
@@ -1239,10 +1256,10 @@ function CharacterSheet({ characterId, onBack }) {
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ fontSize: "0.6rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>Inventory — drag items onto slots</div>
 
-              {/* Category sub-tabs */}
+              {/* Category sub-tabs — only weapons/armor are drag-droppable */}
               <div className="flex gap-1">
-                {[{ key: "all", label: "All" }, ...ITEM_CATEGORIES.map((c) => ({ key: c, label: ITEM_CAT_LABELS[c] }))].map((ct) => {
-                  const count = ct.key === "all" ? inventory.length : inventory.filter((i) => i.category === ct.key).length;
+                {[{ key: "all", label: "All" }, { key: "weapons", label: "Weapons" }, { key: "armor", label: "Armor" }].map((ct) => {
+                  const count = ct.key === "all" ? equipableItems.length : equipableItems.filter((i) => i.category === ct.key).length;
                   return (
                     <button key={ct.key} onClick={() => setInventoryTab(ct.key)} className="cursor-pointer px-2 py-1 rounded"
                       style={{
@@ -1259,13 +1276,13 @@ function CharacterSheet({ characterId, onBack }) {
               </div>
 
               <div style={{ flex: 1, overflowY: "auto", maxHeight: 200 }}>
-                {inventory
+                {equipableItems
                   .filter((item) => inventoryTab === "all" || item.category === inventoryTab)
                   .map((item) => {
                     const eqSlot = getEquippedSlot(item.id);
                     return <DragItem key={item.id} item={item} isEquipped={!!eqSlot} equippedSlotLabel={eqSlot ? getSlotLabel(eqSlot) : ""} />;
                   })}
-                {inventory.filter((item) => inventoryTab === "all" || item.category === inventoryTab).length === 0 && (
+                {equipableItems.filter((item) => inventoryTab === "all" || item.category === inventoryTab).length === 0 && (
                   <div style={{ fontSize: "0.7rem", color: t.primaryDim, fontStyle: "italic", padding: "12px 0", textAlign: "center" }}>No items in this category</div>
                 )}
               </div>
@@ -2449,11 +2466,26 @@ function LoginScreen() {
 /* ═══════════════════════════════════════
    AUTHENTICATED APP — CHARACTER ROUTING
    ═══════════════════════════════════════ */
+async function extractPdfText(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const parts = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    parts.push(content.items.map((item) => item.str).join(" "));
+  }
+  return parts.join("\n");
+}
+
 function AuthenticatedApp() {
   const [activeCharacterId, setActiveCharacterId] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState(null);
   const characters = useQuery(api.characters.list) ?? [];
   const createCharacter = useMutation(api.characters.create);
   const deleteCharacter = useMutation(api.characters.remove);
+  const parseCharacterSheet = useAction(api.ai.parseCharacterSheet);
 
   const handleCreate = async (seed) => {
     const defaults = seed || BLANK_CHARACTER;
@@ -2464,6 +2496,34 @@ function AuthenticatedApp() {
   const handleDelete = async (id) => {
     await deleteCharacter({ characterId: id });
     if (activeCharacterId === id) setActiveCharacterId(null);
+  };
+
+  const handleImportPDF = async (file) => {
+    setImporting(true);
+    setImportError(null);
+    try {
+      const pdfText = await extractPdfText(file);
+      const parsed = await parseCharacterSheet({ pdfText });
+      // Merge parsed data onto BLANK_CHARACTER so all required fields are present
+      const defaults = {
+        ...BLANK_CHARACTER,
+        info: { ...BLANK_CHARACTER.info, ...(parsed.info || {}) },
+        hp: { ...BLANK_CHARACTER.hp, ...(parsed.hp || {}) },
+        currency: { ...BLANK_CHARACTER.currency, ...(parsed.currency || {}) },
+        charNotes: parsed.charNotes || "",
+        skills: Object.keys(parsed.skills || {}).length > 0
+          ? { ...BLANK_CHARACTER.skills, ...parsed.skills }
+          : BLANK_CHARACTER.skills,
+        inventory: Array.isArray(parsed.inventory) ? parsed.inventory : [],
+      };
+      const id = await createCharacter({ defaults });
+      setActiveCharacterId(id);
+    } catch (err) {
+      console.error("PDF import failed:", err);
+      setImportError(err.message || "Import failed. Please try again.");
+    } finally {
+      setImporting(false);
+    }
   };
 
   if (activeCharacterId) {
@@ -2477,6 +2537,21 @@ function AuthenticatedApp() {
 
   return (
     <div>
+      {importError && (
+        <div style={{ position: "fixed", top: 16, left: "50%", transform: "translateX(-50%)", zIndex: 2000, background: "#3a1a1a", border: "1.5px solid #c0392b", color: "#f1948a", borderRadius: 8, padding: "10px 20px", fontSize: "0.75rem", fontFamily: "Arial, sans-serif", maxWidth: 500, textAlign: "center" }}>
+          {importError}
+          <button onClick={() => setImportError(null)} style={{ marginLeft: 12, background: "none", border: "none", color: "#f1948a", cursor: "pointer", fontSize: "0.85rem" }}>✕</button>
+        </div>
+      )}
+      {importing && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 1500, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "#1a2a1a", border: "1.5px solid #4a7c59", borderRadius: 12, padding: "32px 48px", textAlign: "center", fontFamily: "Arial, sans-serif" }}>
+            <div style={{ fontSize: "1.5rem", marginBottom: 12 }}>📄</div>
+            <div style={{ color: "#c8e6c9", fontSize: "0.9rem", letterSpacing: "0.08em" }}>Parsing character sheet...</div>
+            <div style={{ color: "#7a9e7e", fontSize: "0.7rem", marginTop: 8 }}>This may take a moment</div>
+          </div>
+        </div>
+      )}
       <CharacterSelectScreen
         characters={characters.map((c) => ({
           id: c._id,
@@ -2488,6 +2563,7 @@ function AuthenticatedApp() {
         onCreate={() => handleCreate()}
         onOpen={setActiveCharacterId}
         onDelete={handleDelete}
+        onImportPDF={handleImportPDF}
       />
       {/* Seed Hugh Jass button — only shows if no characters exist */}
       {characters.length === 0 && (

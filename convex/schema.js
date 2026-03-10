@@ -38,6 +38,7 @@ export default defineSchema({
       sp: v.number(),
       gp: v.number(),
       pp: v.number(),
+      cr: v.optional(v.number()),
     }),
 
     abilities: v.array(v.any()),
