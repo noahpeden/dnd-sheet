@@ -2166,7 +2166,8 @@ function CharacterSheet({ characterId, onBack }) {
                           const id = "cat_" + Date.now() + "_" + Math.random().toString(36).slice(2);
                           const weaponCats = ["Light Weapons", "Heavy Weapons", "Finesse Weapons"];
                           const armorCats = ["Armor", "Shields"];
-                          const invCategory = weaponCats.includes(activeCat.category) ? "weapons" : armorCats.includes(activeCat.category) ? "armor" : "misc";
+                          const catMap = { "Materials": "materials", "Apothecary": "apothecary", "Mounts & Vehicles": "mounts" };
+                          const invCategory = weaponCats.includes(activeCat.category) ? "weapons" : armorCats.includes(activeCat.category) ? "armor" : (catMap[activeCat.category] ?? "misc");
                           const ecCap = parseEC(item.stats);
                           setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses: {}, bonusNotes: {}, ecCap, enchantments: [] }]);
                           if (cost > 0) setCurrency((p) => ({ ...p, cr: Math.max(0, (p.cr ?? 0) - cost) }));
