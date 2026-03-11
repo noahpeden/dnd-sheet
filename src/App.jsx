@@ -547,7 +547,7 @@ function CharacterSheet({ characterId, onBack }) {
   const [inventoryTab, setInventoryTab] = useState("all");
   const [enchantPicker, setEnchantPicker] = useState(null); // { enchantment, cost, fillsEC, enchType }
   const [enchantTypeFilter, setEnchantTypeFilter] = useState("all"); // "all" | "armor" | "weapons" | "both"
-  const [bgImage, setBgImage] = useState(null);
+  const bgImage = character?.bgImage ?? null;
   const [newSlotLabel, setNewSlotLabel] = useState("");
   const canvasRef = useRef(null);
   const slotIdCounter = useRef(20);
@@ -556,7 +556,21 @@ function CharacterSheet({ characterId, onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setBgImage(ev.target.result);
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_W = 600, MAX_H = 640;
+        const scale = Math.min(MAX_W / img.width, MAX_H / img.height, 1);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const offscreen = document.createElement("canvas");
+        offscreen.width = w;
+        offscreen.height = h;
+        offscreen.getContext("2d").drawImage(img, 0, 0, w, h);
+        updateField("bgImage", offscreen.toDataURL("image/jpeg", 0.8));
+      };
+      img.src = ev.target.result;
+    };
     reader.readAsDataURL(file);
   };
 
@@ -1203,7 +1217,7 @@ function CharacterSheet({ characterId, onBack }) {
               <input type="file" accept="image/*" onChange={handleBgUpload} style={{ display: "none" }} />
             </label>
             {bgImage && (
-              <button onClick={() => setBgImage(null)} className="cursor-pointer px-2 py-1 rounded"
+              <button onClick={() => updateField("bgImage", null)} className="cursor-pointer px-2 py-1 rounded"
                 style={{ background: "rgba(206,107,107,0.1)", color: "#ce6b6b", border: "1px solid #ce6b6b33", fontSize: "0.6rem" }}>
                 ✕ Remove BG
               </button>
