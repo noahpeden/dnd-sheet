@@ -355,6 +355,25 @@ const BLANK_FOLDERS = [
 
 /* ─── ENCHANTMENT HELPERS ─── */
 // Parse EC capacity from an item's stats string, e.g. "1H | EC: 6 | DEF: ..." → 6
+// Parse bonuses/penalties from a stats string like "Bonuses: +3 Reflex, +3 Fortitude | ... | -1 Stealth"
+const parseBonusesFromStats = (stats) => {
+  if (!stats) return {};
+  const bonuses = {};
+  // Extract the "Bonuses: ..." section (comma-separated)
+  const section = stats.match(/Bonuses:\s*([^|]+)/i);
+  if (section) {
+    section[1].split(",").forEach((part) => {
+      const m = part.trim().match(/^([+-]?\d+)\s+(.+)$/);
+      if (m) bonuses[m[2].trim()] = parseInt(m[1], 10);
+    });
+  }
+  // Also capture standalone pipe-separated penalties like "| -1 Stealth"
+  for (const m of stats.matchAll(/\|\s*(-\d+)\s+([\w ]+?)(?:\s*\||$)/g)) {
+    bonuses[m[2].trim()] = parseInt(m[1], 10);
+  }
+  return bonuses;
+};
+
 const parseEC = (stats) => {
   if (!stats) return 0;
   const m = stats.match(/EC:\s*(\d+)/);
@@ -1886,22 +1905,65 @@ function CharacterSheet({ characterId, onBack }) {
                           <button onClick={() => { if (confirm(`Delete "${item.name}"?`)) deleteInventoryItem(item.id); }}
                             style={{ flexShrink: 0, background: "none", border: "none", color: t.dangerLight + "66", fontSize: "0.75rem", cursor: "pointer", padding: "0 2px", alignSelf: "flex-end" }}>✕</button>
                         </div>
-                        {/* Row 2: stats + bonuses */}
-                        <div className="grid grid-cols-2 gap-2 mb-1">
-                          <div>
-                            <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Stats</span>
-                            <input value={item.stats} onChange={(e) => updateInventoryItem(item.id, "stats", e.target.value)}
-                              className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim, color: t.primaryLight, fontSize: "0.8rem" }} />
+                        {/* Row 2: stats */}
+                        <div className="mb-1">
+                          <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Stats</span>
+                          <input value={item.stats} onChange={(e) => updateInventoryItem(item.id, "stats", e.target.value)}
+                            className="w-full bg-transparent border-b outline-none" style={{ borderColor: t.primaryDim, color: t.primaryLight, fontSize: "0.8rem" }} />
+                        </div>
+                        {/* Row 3: Bonuses / Penalties — editable rows */}
+                        <div className="mb-1">
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
+                            <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Bonuses / Penalties</span>
+                            <button onClick={() => {
+                              const existing = item.bonuses || {};
+                              let key = "New Bonus"; let n = 2;
+                              while (key in existing) key = `New Bonus ${n++}`;
+                              updateInventoryItem(item.id, "bonuses", { ...existing, [key]: 0 });
+                            }} style={{ fontSize: "0.5rem", color: t.primary, background: "none", border: `1px solid ${t.primary}55`, borderRadius: 3, padding: "1px 6px", cursor: "pointer" }}>+ Add</button>
                           </div>
-                          <div>
-                            <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Bonuses</span>
-                            <div style={{ fontSize: "0.7rem", color: t.primaryLight }}>
-                              {item.bonuses && Object.entries(item.bonuses).map(([sk, val]) => (
-                                <span key={sk} className="mr-2">{sk}: {fmtMod(val)}{item.bonusNotes?.[sk] ? ` (${item.bonusNotes[sk]})` : ""}</span>
-                              ))}
-                              {(!item.bonuses || Object.keys(item.bonuses).length === 0) && <span style={{ color: t.primaryDim }}>—</span>}
+                          {(!item.bonuses || Object.keys(item.bonuses).length === 0) && (
+                            <span style={{ fontSize: "0.6rem", color: t.primaryDim, fontStyle: "italic" }}>None</span>
+                          )}
+                          <datalist id={`skills-list-${item.id}`}>
+                            {Object.values(SKILL_GROUPS).flatMap((g) => g.skills).map((sk) => (
+                              <option key={sk.name} value={sk.name} />
+                            ))}
+                          </datalist>
+                          {Object.entries(item.bonuses || {}).map(([sk, val], idx) => (
+                            <div key={idx} style={{ display: "flex", gap: 4, alignItems: "center", marginBottom: 2 }}>
+                              <input
+                                value={sk}
+                                list={`skills-list-${item.id}`}
+                                placeholder="Skill name"
+                                onChange={(e) => {
+                                  const newKey = e.target.value;
+                                  const entries = Object.entries(item.bonuses || {});
+                                  entries[idx] = [newKey, val];
+                                  updateInventoryItem(item.id, "bonuses", Object.fromEntries(entries));
+                                }}
+                                style={{ flex: 2, background: "transparent", border: "none", borderBottom: `1px solid ${t.primaryDim}55`, color: t.primaryLight, fontSize: "0.65rem", outline: "none", minWidth: 0 }}
+                              />
+                              <input
+                                type="number"
+                                value={val}
+                                onChange={(e) => updateInventoryItem(item.id, "bonuses", { ...item.bonuses, [sk]: +e.target.value || 0 })}
+                                style={{ width: 38, background: "transparent", border: "none", borderBottom: `1px solid ${t.primaryDim}55`, color: val > 0 ? "#7dbb8a" : val < 0 ? "#ce6b6b" : t.primaryMid, fontSize: "0.65rem", fontWeight: 700, outline: "none", textAlign: "center" }}
+                              />
+                              <input
+                                value={item.bonusNotes?.[sk] || ""}
+                                placeholder="note..."
+                                onChange={(e) => updateInventoryItem(item.id, "bonusNotes", { ...(item.bonusNotes || {}), [sk]: e.target.value })}
+                                style={{ flex: 3, background: "transparent", border: "none", borderBottom: `1px solid ${t.primaryDim}33`, color: t.textDim, fontSize: "0.6rem", fontStyle: "italic", outline: "none", minWidth: 0 }}
+                              />
+                              <button onClick={() => {
+                                const { [sk]: _, ...rest } = item.bonuses || {};
+                                const { [sk]: __, ...restNotes } = item.bonusNotes || {};
+                                updateInventoryItem(item.id, "bonuses", rest);
+                                updateInventoryItem(item.id, "bonusNotes", restNotes);
+                              }} style={{ background: "none", border: "none", color: "#ce6b6b88", fontSize: "0.6rem", cursor: "pointer", padding: "0 2px", flexShrink: 0 }}>✕</button>
                             </div>
-                          </div>
+                          ))}
                         </div>
                         <div>
                           <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Notes</span>
@@ -1909,14 +1971,25 @@ function CharacterSheet({ characterId, onBack }) {
                             rows={2} className="w-full bg-transparent border outline-none rounded px-1" style={{ borderColor: t.primaryDim + "55", color: t.textDim, fontSize: "0.75rem" }} />
                         </div>
                         {/* Enchantments section */}
-                        {(item.ecCap > 0) && (() => {
+                        {(item.ecCap > 0 || item.category === "weapons" || item.category === "armor") && (() => {
                           const usedEC = (item.enchantments || []).reduce((sum, e) => sum + (e.fillsEC || 0), 0);
-                          const remainEC = item.ecCap - usedEC;
+                          const remainEC = (item.ecCap || 0) - usedEC;
                           return (
                             <div style={{ marginTop: 6, padding: "5px 7px", borderRadius: 5, background: "rgba(74,124,89,0.06)", border: `1px solid ${t.primaryDim}33` }}>
                               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
                                 <span style={{ fontSize: "0.5rem", color: t.primaryMid, textTransform: "uppercase", letterSpacing: "0.1em" }}>Enchantments</span>
-                                <span style={{ fontSize: "0.5rem", color: remainEC > 0 ? t.primary : "#ce6b6b", fontWeight: 600 }}>{usedEC}/{item.ecCap} EC</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                                  <span style={{ fontSize: "0.5rem", color: t.primaryDim }}>{usedEC}/</span>
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    value={item.ecCap ?? 0}
+                                    onChange={(e) => updateInventoryItem(item.id, "ecCap", Math.max(0, +e.target.value || 0))}
+                                    title="Enchant Capacity"
+                                    style={{ width: 28, background: "transparent", border: "none", borderBottom: `1px solid ${t.primaryDim}66`, color: remainEC > 0 ? t.primary : "#ce6b6b", fontSize: "0.5rem", fontWeight: 700, outline: "none", textAlign: "center", padding: 0 }}
+                                  />
+                                  <span style={{ fontSize: "0.5rem", color: remainEC > 0 ? t.primary : "#ce6b6b", fontWeight: 600 }}>EC</span>
+                                </div>
                               </div>
                               {(item.enchantments || []).length === 0 && (
                                 <span style={{ fontSize: "0.6rem", color: t.primaryDim, fontStyle: "italic" }}>No enchantments</span>
@@ -2155,7 +2228,8 @@ function CharacterSheet({ characterId, onBack }) {
                           const catMap = { "Materials": "materials", "Apothecary": "apothecary", "Mounts & Vehicles": "mounts" };
                           const invCategory = weaponCats.includes(activeCat.category) ? "weapons" : armorCats.includes(activeCat.category) ? "armor" : (catMap[activeCat.category] ?? "misc");
                           const ecCap = parseEC(item.stats);
-                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses: {}, bonusNotes: {}, ecCap, enchantments: [] }]);
+                          const bonuses = parseBonusesFromStats(item.stats);
+                          setInventory((prev) => [...prev, { id, name: item.name, stats: item.stats, notes: item.description, category: invCategory, bonuses, bonusNotes: {}, ecCap, enchantments: [] }]);
                           if (cost > 0) setCurrency((p) => ({ ...p, cr: Math.max(0, (p.cr ?? 0) - cost) }));
                         }}
                         style={{ flexShrink: 0, padding: "3px 9px", borderRadius: 5, border: `1px solid ${t.primary}66`, background: `${t.primary}22`, color: t.primary, fontSize: "var(--ty-label-size)", cursor: "pointer", whiteSpace: "nowrap" }}>
