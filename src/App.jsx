@@ -547,7 +547,10 @@ function CharacterSheet({ characterId, onBack }) {
   const [inventoryTab, setInventoryTab] = useState("all");
   const [enchantPicker, setEnchantPicker] = useState(null); // { enchantment, cost, fillsEC, enchType }
   const [enchantTypeFilter, setEnchantTypeFilter] = useState("all"); // "all" | "armor" | "weapons" | "both"
-  const bgImage = character?.bgImage ?? null;
+  const bgStorageKey = `bgImage_${characterId}`;
+  const [bgImage, setBgImage] = useState(() => {
+    try { return localStorage.getItem(`bgImage_${characterId}`) ?? null; } catch { return null; }
+  });
   const [newSlotLabel, setNewSlotLabel] = useState("");
   const canvasRef = useRef(null);
   const slotIdCounter = useRef(20);
@@ -567,7 +570,9 @@ function CharacterSheet({ characterId, onBack }) {
         offscreen.width = w;
         offscreen.height = h;
         offscreen.getContext("2d").drawImage(img, 0, 0, w, h);
-        updateField("bgImage", offscreen.toDataURL("image/jpeg", 0.8));
+        const dataUrl = offscreen.toDataURL("image/jpeg", 0.8);
+        try { localStorage.setItem(bgStorageKey, dataUrl); } catch { /* storage full */ }
+        setBgImage(dataUrl);
       };
       img.src = ev.target.result;
     };
@@ -1217,7 +1222,7 @@ function CharacterSheet({ characterId, onBack }) {
               <input type="file" accept="image/*" onChange={handleBgUpload} style={{ display: "none" }} />
             </label>
             {bgImage && (
-              <button onClick={() => updateField("bgImage", null)} className="cursor-pointer px-2 py-1 rounded"
+              <button onClick={() => { try { localStorage.removeItem(bgStorageKey); } catch {} setBgImage(null); }} className="cursor-pointer px-2 py-1 rounded"
                 style={{ background: "rgba(206,107,107,0.1)", color: "#ce6b6b", border: "1px solid #ce6b6b33", fontSize: "0.6rem" }}>
                 ✕ Remove BG
               </button>
