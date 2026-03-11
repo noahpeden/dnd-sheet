@@ -50,5 +50,6 @@ export default defineSchema({
 
     theme: v.any(),
     textStyles: v.any(),
+    bgImage: v.optional(v.string()),
   }).index("by_user", ["userId"]),
 });
